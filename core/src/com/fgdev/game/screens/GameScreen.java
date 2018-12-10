@@ -14,7 +14,7 @@ public class GameScreen extends AbstractGameScreen {
     private WorldRenderer worldRenderer;
     private boolean paused;
 
-    public GameScreen (Game game) {
+    public GameScreen (DirectedGame game) {
         super(game);
     }
 
@@ -65,5 +65,10 @@ public class GameScreen extends AbstractGameScreen {
     public void hide() {
         worldRenderer.dispose();
         Gdx.input.setCatchBackKey(false);
+    }
+
+    @Override
+    public InputProcessor getInputProcessor() {
+        return worldController;
     }
 }

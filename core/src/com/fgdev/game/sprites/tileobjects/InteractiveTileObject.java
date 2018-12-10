@@ -6,7 +6,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
-import com.fgdev.game.screens.GameScreen;
 import com.fgdev.game.util.Constants;
 import com.fgdev.game.world.WorldRenderer;
 

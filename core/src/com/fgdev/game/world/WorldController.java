@@ -1,7 +1,11 @@
 package com.fgdev.game.world;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.math.Interpolation;
+import com.fgdev.game.screens.DirectedGame;
 import com.fgdev.game.screens.MenuScreen;
+import com.fgdev.game.screens.transitions.ScreenTransition;
+import com.fgdev.game.screens.transitions.ScreenTransitionSlide;
 import com.fgdev.game.util.CameraHelper;
 import com.fgdev.game.util.Constants;
 
@@ -10,7 +14,7 @@ public class WorldController extends InputAdapter {
     private static final String TAG = WorldController.class.getName();
 
 
-    private Game game;
+    private DirectedGame game;
 
     public CameraHelper cameraHelper;
 
@@ -20,13 +24,12 @@ public class WorldController extends InputAdapter {
     private float timeLeftGameOverDelay;
 
 
-    public WorldController(Game game) {
+    public WorldController(DirectedGame game) {
         this.game = game;
         init();
     }
 
     private void init() {
-        Gdx.input.setInputProcessor(this);
         cameraHelper = new CameraHelper();
         lives = Constants.LIVES_START;
         timeLeftGameOverDelay = 0;
@@ -58,7 +61,9 @@ public class WorldController extends InputAdapter {
 
     private void backToMenu () {
         // switch to menu screen
-        game.setScreen(new MenuScreen(game));
+        ScreenTransition transition = ScreenTransitionSlide.init(0.75f,
+                ScreenTransitionSlide.DOWN, false, Interpolation.bounceOut);
+        game.setScreen(new MenuScreen(game), transition);
     }
 
 

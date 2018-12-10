@@ -8,14 +8,14 @@ import com.badlogic.gdx.utils.Disposable;
 import com.fgdev.game.Assets;
 import com.fgdev.game.util.Constants;
 
-public class Hud implements Disposable {
+public class HUD implements Disposable {
 
-    private static final String TAG = Hud.class.getName();
+    private static final String TAG = HUD.class.getName();
 
     private OrthographicCamera cameraGUI;
     private SpriteBatch batch;
 
-    public Hud(SpriteBatch batch) {
+    public HUD(SpriteBatch batch) {
         this.batch = batch;
         init();
     }

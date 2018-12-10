@@ -1,0 +1,14 @@
+{
+  com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+    play: { down: play-dn, up: play-up },
+    options: { down: options-dn, up: options-up }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.Image: {
+    background: { drawable: background },
+    logo: { drawable: logo },
+    info: { drawable: info },
+    coins: { drawable: coins },
+    character: { drawable: character },
+    high_score: { drawable: high_score },
+  },
+}

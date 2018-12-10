@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
+import com.fgdev.game.util.Constants;
 
 public class Assets implements Disposable, AssetErrorListener {
     public static final String TAG = Assets.class.getName();
@@ -24,6 +25,9 @@ public class Assets implements Disposable, AssetErrorListener {
         this.assetManager = assetManager;
         // set asset manager error handler
         assetManager.setErrorListener(this);
+        // load texture atlas
+        assetManager.load(Constants.TEXTURE_ATLAS_UI, TextureAtlas.class);
+        assetManager.load(Constants.TEXTURE_ATLAS_LIBGDX_UI, TextureAtlas.class);
         // start loading assets and wait until finished
         assetManager.finishLoading();
         Gdx.app.debug(TAG, "# of assets loaded: "

@@ -7,11 +7,24 @@ public class Constants {
     // PPM
     public static final float PPM = 100.0f;
     // GUI Width
-    public static final float VIEWPORT_GUI_WIDTH = 1200.0f;
+    public static final float VIEWPORT_GUI_WIDTH = 1240.0f;
     // GUI Height
-    public static final float VIEWPORT_GUI_HEIGHT = 624.0f;
+    public static final float VIEWPORT_GUI_HEIGHT = 630.0f;
     // Location of image file for level 01
     public static final String LEVEL_01 = "levels/Level1/level1.tmx";
     // Amount of extra lives at level start
     public static final int LIVES_START = 3;
+    // Delay after game over
+    public static final float TIME_DELAY_GAME_OVER = 3;
+
+    public static final String TEXTURE_ATLAS_UI = "images/ui.atlas";
+    public static final String TEXTURE_ATLAS_LIBGDX_UI = "images/uiskin.atlas";
+    // Location of description file for skins
+    public static final String SKIN_UI = "images/ui.json";
+    public static final String SKIN_LIBGDX_UI = "images/uiskin.json";
+
+    /**
+     * Game preferences file
+     */
+    public static final String PREFERENCES = "canyonbunny.prefs";
 }

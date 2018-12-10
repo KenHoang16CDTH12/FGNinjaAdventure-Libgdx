@@ -1,0 +1,47 @@
+
+girl_character.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+GirlIdle5
+  rotate: false
+  xy: 1, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+GirlIdle6
+  rotate: false
+  xy: 67, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+GirlIdle1
+  rotate: false
+  xy: 133, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+GirlIdle3
+  rotate: false
+  xy: 199, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+GirlIdle4
+  rotate: false
+  xy: 265, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+GirlIdle2
+  rotate: false
+  xy: 331, 1
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1

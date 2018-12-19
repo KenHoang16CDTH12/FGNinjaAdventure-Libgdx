@@ -1,10 +1,9 @@
 package com.fgdev.game.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.fgdev.game.Assets;
+import com.fgdev.game.util.Assets;
 
 public abstract class AbstractGameScreen implements Screen {
 

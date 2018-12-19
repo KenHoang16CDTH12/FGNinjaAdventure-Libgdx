@@ -1,7 +1,6 @@
 package com.fgdev.game;
 
 import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Interpolation;
@@ -9,10 +8,15 @@ import com.fgdev.game.screens.DirectedGame;
 import com.fgdev.game.screens.MenuScreen;
 import com.fgdev.game.screens.transitions.ScreenTransition;
 import com.fgdev.game.screens.transitions.ScreenTransitionSlice;
+import com.fgdev.game.util.Assets;
+import com.fgdev.game.util.AudioManager;
+import com.fgdev.game.util.GamePreferences;
 
 public class FGDevMain extends DirectedGame {
 
 	private static final String TAG = FGDevMain.class.getName();
+
+	public static final String GAME_TITLE = "FGDev | Ninja Adventure 1.0 [fps: %s]";
 
 	@Override
 	public void create () {
@@ -20,9 +24,18 @@ public class FGDevMain extends DirectedGame {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 		// Load assets
 		Assets.instance.init(new AssetManager());
+		// Load preferences for audio settings and start playing music
+		GamePreferences.instance.load();
+		AudioManager.instance.play(Assets.instance.music.song01);
 		// Start game at menu screen
 		ScreenTransition transition = ScreenTransitionSlice.init(2,
 				ScreenTransitionSlice.UP_DOWN, 10, Interpolation.pow5Out);
 		setScreen(new MenuScreen(this), transition);
+	}
+
+	@Override
+	public void render() {
+		Gdx.graphics.setTitle(String.format(GAME_TITLE, Gdx.graphics.getFramesPerSecond()));
+		super.render();
 	}
 }

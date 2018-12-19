@@ -6,70 +6,70 @@ filter: Nearest,Nearest
 repeat: none
 background
   rotate: false
-  xy: 2, 731
-  size: 1800, 893
-  orig: 1800, 893
+  xy: 2, 893
+  size: 2000, 1143
+  orig: 2000, 1143
   offset: 0, 0
   index: -1
 character
   rotate: false
-  xy: 2, 275
+  xy: 2, 437
   size: 443, 454
   orig: 443, 454
   offset: 0, 0
   index: -1
 coins
   rotate: false
-  xy: 447, 372
+  xy: 447, 534
   size: 510, 357
   orig: 510, 357
   offset: 0, 0
   index: -1
 high_score
   rotate: false
-  xy: 959, 556
+  xy: 959, 718
   size: 653, 173
   orig: 653, 173
   offset: 0, 0
   index: -1
 info
   rotate: false
-  xy: 959, 386
-  size: 564, 168
-  orig: 564, 168
+  xy: 959, 614
+  size: 359, 102
+  orig: 359, 102
   offset: 0, 0
   index: -1
 logo
   rotate: false
-  xy: 2, 154
-  size: 340, 119
-  orig: 340, 119
+  xy: 2, 306
+  size: 350, 129
+  orig: 350, 129
   offset: 0, 0
   index: -1
 options-dn
   rotate: false
-  xy: 1804, 1474
+  xy: 1614, 741
   size: 150, 150
   orig: 150, 150
   offset: 0, 0
   index: -1
 options-up
   rotate: false
-  xy: 1614, 579
+  xy: 2, 154
   size: 150, 150
   orig: 150, 150
   offset: 0, 0
   index: -1
 play-dn
   rotate: false
-  xy: 2, 2
+  xy: 1766, 741
   size: 150, 150
   orig: 150, 150
   offset: 0, 0
   index: -1
 play-up
   rotate: false
-  xy: 1804, 1322
+  xy: 2, 2
   size: 150, 150
   orig: 150, 150
   offset: 0, 0

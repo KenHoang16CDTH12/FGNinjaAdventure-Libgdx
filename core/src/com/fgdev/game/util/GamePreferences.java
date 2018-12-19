@@ -5,15 +5,19 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.MathUtils;
 
 public class GamePreferences {
+
     public static final String TAG = GamePreferences.class.getName();
+
     public static final GamePreferences instance = new GamePreferences();
 
     public boolean sound;
     public boolean music;
     public float volSound;
     public float volMusic;
-    public int charSkin;
+    public int playerSkin;
+    public boolean isGirl;
     public boolean showFpsCounter;
+    public boolean useMonochromeShader;
 
     private Preferences prefs;
     // singleton: prevent instantiation from other classes
@@ -28,14 +32,21 @@ public class GamePreferences {
                 0.0f, 1.0f);
         volMusic = MathUtils.clamp(prefs.getFloat("volMusic", 0.5f),
                 0.0f, 1.0f);
+        playerSkin = prefs.getInteger("playerSkin", 0);
+        isGirl = prefs.getBoolean("isGirl", true);
         showFpsCounter = prefs.getBoolean("showFpsCounter", false);
+        useMonochromeShader = prefs.getBoolean("useMonochromeShader",
+                false);
     }
     public void save () {
         prefs.putBoolean("sound", sound);
         prefs.putBoolean("music", music);
         prefs.putFloat("volSound", volSound);
         prefs.putFloat("volMusic", volMusic);
+        prefs.putInteger("playerSkin", playerSkin);
+        prefs.putBoolean("isGirl", isGirl);
         prefs.putBoolean("showFpsCounter", showFpsCounter);
+        prefs.putBoolean("useMonochromeShader", useMonochromeShader);
         prefs.flush();
     }
 }

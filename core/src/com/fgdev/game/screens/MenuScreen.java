@@ -1,20 +1,27 @@
 package com.fgdev.game.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.fgdev.game.util.Assets;
 import com.fgdev.game.screens.transitions.ScreenTransition;
 import com.fgdev.game.screens.transitions.ScreenTransitionFade;
+import com.fgdev.game.util.AudioManager;
 import com.fgdev.game.util.Constants;
 import com.fgdev.game.util.GamePreferences;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class MenuScreen extends AbstractGameScreen {
 
@@ -39,10 +46,12 @@ public class MenuScreen extends AbstractGameScreen {
     private Slider sldSound;
     private CheckBox chkMusic;
     private Slider sldMusic;
+    private CheckBox chkGirl;
     private CheckBox chkShowFpsCounter;
+    private CheckBox chkUseMonoChromeShader;
     // debug
     private final float DEBUG_REBUILD_INTERVAL = 5.0f;
-    private boolean debugEnabled = true;
+    private boolean debugEnabled = false;
     private float debugRebuildStage;
 
     public MenuScreen (DirectedGame game) {
@@ -125,7 +134,16 @@ public class MenuScreen extends AbstractGameScreen {
         // + Coins
         imgCoins = new Image(skinFGDev, "coins");
         layer.addActor(imgCoins);
-        imgCoins.setPosition(135, 200);
+        imgCoins.setOrigin(imgCoins.getWidth() / 2,
+                imgCoins.getHeight() / 2);
+        imgCoins.addAction(sequence(
+                moveTo(135, 100),
+                scaleTo(0, 0),
+                fadeOut(0),
+                delay(2.5f),
+                parallel(moveBy(-20, -20, 1.5f, Interpolation.fade),
+                        scaleTo(1.0f, 1.0f, 0.25f, Interpolation.linear),
+                        alpha(1.0f, 0.5f))));
         // + Bunny
         imgCharacter = new Image(skinFGDev, "character");
         layer.addActor(imgCharacter);
@@ -135,13 +153,14 @@ public class MenuScreen extends AbstractGameScreen {
     private Table buildLogosLayer () {
         Table layer = new Table();
         layer.left().top();
+        layer.pad(10);
         // + Game Logo
         imgLogo = new Image(skinFGDev, "logo");
         layer.add(imgLogo);
         layer.row().expandY();
         // + Info Logos
         imgInfo = new Image(skinFGDev, "info");
-        layer.add(imgInfo).bottom();
+        layer.add(imgInfo).bottom().pad(10);
         if (debugEnabled) layer.debug();
         return layer;
     }
@@ -180,7 +199,7 @@ public class MenuScreen extends AbstractGameScreen {
         // Make options window slightly transparent
         winOptions.setColor(1, 1, 1, 0.8f);
         // Hide options window by default
-        winOptions.setVisible(false);
+        showOptionsWindow(false, false);
         if (debugEnabled) winOptions.debug();
         // Let TableLayout recalculate widget sizes and positions
         winOptions.pack();
@@ -198,7 +217,9 @@ public class MenuScreen extends AbstractGameScreen {
         sldSound.setValue(prefs.volSound);
         chkMusic.setChecked(prefs.music);
         sldMusic.setValue(prefs.volMusic);
+        chkGirl.setChecked(prefs.isGirl);
         chkShowFpsCounter.setChecked(prefs.showFpsCounter);
+        chkUseMonoChromeShader.setChecked(prefs.useMonochromeShader);
     }
 
     private void saveSettings() {
@@ -207,18 +228,23 @@ public class MenuScreen extends AbstractGameScreen {
         prefs.volSound = sldSound.getValue();
         prefs.music = chkMusic.isChecked();
         prefs.volMusic = sldMusic.getValue();
+        prefs.isGirl = chkGirl.isChecked();
         prefs.showFpsCounter = chkShowFpsCounter.isChecked();
+        prefs.useMonochromeShader = chkUseMonoChromeShader.isChecked();
         prefs.save();
     }
 
     private void onSaveClicked() {
         saveSettings();
         onCancelClicked();
+        // Load assets
+        Assets.instance.init(new AssetManager());
+        AudioManager.instance.onSettingsUpdated();
     }
     private void onCancelClicked() {
-        btnMenuPlay.setVisible(true);
-        btnMenuOptions.setVisible(true);
-        winOptions.setVisible(false);
+        showMenuButtons(true);
+        showOptionsWindow(false, true);
+        AudioManager.instance.onSettingsUpdated();
     }
 
     private void onPlayClicked () {
@@ -228,9 +254,8 @@ public class MenuScreen extends AbstractGameScreen {
 
     private void onOptionsClicked () {
         loadSettings();
-        btnMenuPlay.setVisible(false);
-        btnMenuOptions.setVisible(false);
-        winOptions.setVisible(true);
+        showMenuButtons(false);
+        showOptionsWindow(true, true);
     }
 
     private Table buildOptWinAudioSettings () {
@@ -268,10 +293,20 @@ public class MenuScreen extends AbstractGameScreen {
         tbl.row();
         tbl.columnDefaults(0).padRight(10);
         tbl.columnDefaults(1).padRight(10);
+        // + Checkbox, "Change gender" label
+        chkGirl = new CheckBox("", skinLibgdx);
+        tbl.add(new Label("Girl", skinLibgdx));
+        tbl.add(chkGirl);
+        tbl.row();
         // + Checkbox, "Show FPS Counter" label
         chkShowFpsCounter = new CheckBox("", skinLibgdx);
         tbl.add(new Label("Show FPS Counter", skinLibgdx));
         tbl.add(chkShowFpsCounter);
+        tbl.row();
+        // + Checkbox, "Use Monochrome Shader" label
+        chkUseMonoChromeShader = new CheckBox("", skinLibgdx);
+        tbl.add(new Label("Use Monochrome Shader", skinLibgdx));
+        tbl.add(chkUseMonoChromeShader);
         tbl.row();
         return tbl;
     }
@@ -311,4 +346,40 @@ public class MenuScreen extends AbstractGameScreen {
         });
         return tbl;
     }
+
+    private void showMenuButtons (boolean visible) {
+        float moveDuration = 1.0f;
+        Interpolation moveEasing = Interpolation.swing;
+        float delayOptionsButton = 0.25f;
+        float moveX = 300 * (visible ? -1 : 1);
+        float moveY = 0 * (visible ? -1 : 1);
+        final Touchable touchEnabled = visible ? Touchable.enabled
+                : Touchable.disabled;
+        btnMenuPlay.addAction(
+                moveBy(moveX, moveY, moveDuration, moveEasing));
+        btnMenuOptions.addAction(sequence(
+                delay(delayOptionsButton),
+                moveBy(moveX, moveY, moveDuration, moveEasing)));
+        SequenceAction seq = sequence();
+        if (visible)
+            seq.addAction(delay(delayOptionsButton + moveDuration));
+        seq.addAction(run(new Runnable() {
+            public void run () {
+                btnMenuPlay.setTouchable(touchEnabled);
+                btnMenuOptions.setTouchable(touchEnabled);
+            }
+        }));
+        stage.addAction(seq);
+    }
+    private void showOptionsWindow (boolean visible,
+                                    boolean animated) {
+        float alphaTo = visible ? 0.8f : 0.0f;
+        float duration = animated ? 1.0f : 0.0f;
+        Touchable touchEnabled = visible ? Touchable.enabled
+                : Touchable.disabled;
+        winOptions.addAction(sequence(
+                touchable(touchEnabled),
+                alpha(alphaTo, duration)));
+    }
+
 }

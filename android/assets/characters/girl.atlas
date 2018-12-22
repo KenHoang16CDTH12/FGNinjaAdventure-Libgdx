@@ -104,49 +104,49 @@ anim_climb
   index: 3
 anim_climb
   rotate: false
-  xy: 1940, 342
+  xy: 481, 243
   size: 54, 75
   orig: 54, 75
   offset: 0, 0
   index: 4
 anim_climb
   rotate: false
-  xy: 481, 243
+  xy: 537, 247
   size: 54, 75
   orig: 54, 75
   offset: 0, 0
   index: 5
 anim_climb
   rotate: false
-  xy: 537, 247
+  xy: 593, 247
   size: 54, 75
   orig: 54, 75
   offset: 0, 0
   index: 6
 anim_climb
   rotate: false
-  xy: 593, 247
+  xy: 649, 247
   size: 54, 75
   orig: 54, 75
   offset: 0, 0
   index: 7
 anim_climb
   rotate: false
-  xy: 649, 247
+  xy: 705, 247
   size: 54, 75
   orig: 54, 75
   offset: 0, 0
   index: 8
 anim_climb
   rotate: false
-  xy: 705, 247
+  xy: 761, 247
   size: 54, 75
   orig: 54, 75
   offset: 0, 0
   index: 9
 anim_climb
   rotate: false
-  xy: 761, 247
+  xy: 817, 247
   size: 54, 75
   orig: 54, 75
   offset: 0, 0
@@ -293,70 +293,70 @@ anim_glide
   index: 10
 anim_iddle
   rotate: false
-  xy: 1996, 342
+  xy: 873, 247
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 1
 anim_iddle
   rotate: false
-  xy: 461, 102
+  xy: 919, 247
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 2
 anim_iddle
   rotate: false
-  xy: 461, 25
+  xy: 1151, 253
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 3
 anim_iddle
   rotate: false
-  xy: 1189, 253
+  xy: 1383, 269
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 4
 anim_iddle
   rotate: false
-  xy: 1235, 269
+  xy: 1429, 269
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 5
 anim_iddle
   rotate: false
-  xy: 1281, 269
+  xy: 1475, 269
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 6
 anim_iddle
   rotate: false
-  xy: 1327, 269
+  xy: 1521, 269
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 7
 anim_iddle
   rotate: false
-  xy: 1373, 269
+  xy: 1567, 267
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 8
 anim_iddle
   rotate: false
-  xy: 1419, 269
+  xy: 1613, 267
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
   index: 9
 anim_iddle
   rotate: false
-  xy: 1465, 269
+  xy: 1659, 267
   size: 44, 75
   orig: 44, 75
   offset: 0, 0
@@ -524,49 +524,49 @@ anim_jump_throw
   index: 3
 anim_jump_throw
   rotate: false
-  xy: 1968, 419
+  xy: 1131, 330
   size: 64, 75
   orig: 64, 75
   offset: 0, 0
   index: 4
 anim_jump_throw
   rotate: false
-  xy: 1131, 330
+  xy: 1197, 346
   size: 64, 75
   orig: 64, 75
   offset: 0, 0
   index: 5
 anim_jump_throw
   rotate: false
-  xy: 1197, 346
+  xy: 1263, 346
   size: 64, 75
   orig: 64, 75
   offset: 0, 0
   index: 6
 anim_jump_throw
   rotate: false
-  xy: 1263, 346
+  xy: 1329, 346
   size: 64, 75
   orig: 64, 75
   offset: 0, 0
   index: 7
 anim_jump_throw
   rotate: false
-  xy: 1329, 346
+  xy: 1395, 346
   size: 64, 75
   orig: 64, 75
   offset: 0, 0
   index: 8
 anim_jump_throw
   rotate: false
-  xy: 1395, 346
+  xy: 1461, 346
   size: 64, 75
   orig: 64, 75
   offset: 0, 0
   index: 9
 anim_jump_throw
   rotate: false
-  xy: 1461, 346
+  xy: 1527, 346
   size: 64, 75
   orig: 64, 75
   offset: 0, 0
@@ -671,91 +671,91 @@ anim_slide
   index: 4
 anim_slide
   rotate: false
-  xy: 817, 262
+  xy: 965, 268
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: 5
 anim_slide
   rotate: false
-  xy: 879, 262
+  xy: 1027, 268
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: 6
 anim_slide
   rotate: false
-  xy: 941, 268
+  xy: 1089, 268
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: 7
 anim_slide
   rotate: false
-  xy: 1003, 268
+  xy: 1197, 284
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: 8
 anim_slide
   rotate: false
-  xy: 1065, 268
+  xy: 1259, 284
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: 9
 anim_slide
   rotate: false
-  xy: 1127, 268
+  xy: 1321, 284
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: 10
 anim_throw
   rotate: false
-  xy: 1527, 344
+  xy: 1593, 344
   size: 57, 77
   orig: 57, 77
   offset: 0, 0
   index: 1
 anim_throw
   rotate: false
-  xy: 1586, 344
+  xy: 1652, 344
   size: 57, 77
   orig: 57, 77
   offset: 0, 0
   index: 2
 anim_throw
   rotate: false
-  xy: 1645, 344
+  xy: 1711, 344
   size: 57, 77
   orig: 57, 77
   offset: 0, 0
   index: 3
 anim_throw
   rotate: false
-  xy: 1704, 344
+  xy: 1770, 344
   size: 57, 77
   orig: 57, 77
   offset: 0, 0
   index: 4
 anim_throw
   rotate: false
-  xy: 1763, 344
+  xy: 1829, 344
   size: 57, 77
   orig: 57, 77
   offset: 0, 0
   index: 5
 anim_throw
   rotate: false
-  xy: 1822, 344
+  xy: 1888, 344
   size: 57, 77
   orig: 57, 77
   offset: 0, 0
   index: 6
 anim_throw
   rotate: false
-  xy: 1881, 344
+  xy: 1947, 343
   size: 57, 77
   orig: 57, 77
   offset: 0, 0
@@ -781,3 +781,10 @@ anim_throw
   orig: 57, 77
   offset: 0, 0
   index: 10
+head
+  rotate: false
+  xy: 1968, 422
+  size: 72, 72
+  orig: 72, 72
+  offset: 0, 0
+  index: -1

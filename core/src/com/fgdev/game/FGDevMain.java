@@ -7,10 +7,11 @@ import com.badlogic.gdx.math.Interpolation;
 import com.fgdev.game.screens.DirectedGame;
 import com.fgdev.game.screens.MenuScreen;
 import com.fgdev.game.screens.transitions.ScreenTransition;
+import com.fgdev.game.screens.transitions.ScreenTransitionFade;
 import com.fgdev.game.screens.transitions.ScreenTransitionSlice;
-import com.fgdev.game.util.Assets;
-import com.fgdev.game.util.AudioManager;
-import com.fgdev.game.util.GamePreferences;
+import com.fgdev.game.utils.Assets;
+import com.fgdev.game.utils.AudioManager;
+import com.fgdev.game.utils.GamePreferences;
 
 public class FGDevMain extends DirectedGame {
 
@@ -26,10 +27,8 @@ public class FGDevMain extends DirectedGame {
 		Assets.instance.init(new AssetManager());
 		// Load preferences for audio settings and start playing music
 		GamePreferences.instance.load();
-		AudioManager.instance.play(Assets.instance.music.song01);
 		// Start game at menu screen
-		ScreenTransition transition = ScreenTransitionSlice.init(2,
-				ScreenTransitionSlice.UP_DOWN, 10, Interpolation.pow5Out);
+		ScreenTransition transition = ScreenTransitionFade.init(0.75f);
 		setScreen(new MenuScreen(this), transition);
 	}
 

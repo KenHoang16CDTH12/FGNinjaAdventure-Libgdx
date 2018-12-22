@@ -5,7 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.physics.box2d.World;
+import com.fgdev.game.helpers.WorldContactListener;
 import com.fgdev.game.screens.transitions.ScreenTransition;
+
+import static com.fgdev.game.Constants.*;
 
 public abstract class DirectedGame implements ApplicationListener {
 
@@ -17,6 +21,8 @@ public abstract class DirectedGame implements ApplicationListener {
     private SpriteBatch batch;
     private float t;
     private ScreenTransition screenTransition;
+    private float accumulator;
+    public WorldContactListener worldContactListener;
 
     public void setScreen (AbstractGameScreen screen) {
         setScreen(screen, null);
@@ -30,6 +36,7 @@ public abstract class DirectedGame implements ApplicationListener {
             currFbo = new FrameBuffer(Pixmap.Format.RGB888, w, h, false);
             nextFbo = new FrameBuffer(Pixmap.Format.RGB888, w, h, false);
             batch = new SpriteBatch();
+            accumulator = 0;
             init = true;
         }
         // start new transition
@@ -45,11 +52,6 @@ public abstract class DirectedGame implements ApplicationListener {
     }
 
     @Override
-    public void create() {
-
-    }
-
-    @Override
     public void resize(int width, int height) {
         if (currScreen != null) currScreen.resize(width, height);
         if (nextScreen != null) nextScreen.resize(width, height);
@@ -61,8 +63,10 @@ public abstract class DirectedGame implements ApplicationListener {
         float deltaTime = Math.min(Gdx.graphics.getDeltaTime(),
                 1.0f / 60.0f);
         if (nextScreen == null) {
-        // no ongoing transition
-            if (currScreen != null) currScreen.render(deltaTime);
+            // no ongoing transition
+            if (currScreen != null) {
+                currScreen.render(deltaTime);
+            }
         } else {
             // ongoing transition
             float duration = 0;
@@ -75,8 +79,7 @@ public abstract class DirectedGame implements ApplicationListener {
                 if (currScreen != null) currScreen.hide();
                 nextScreen.resume();
                 // enable input for next screen
-                Gdx.input.setInputProcessor(
-                        nextScreen.getInputProcessor());
+                Gdx.input.setInputProcessor(nextScreen.getInputProcessor());
                 // switch screens
                 currScreen = nextScreen;
                 nextScreen = null;

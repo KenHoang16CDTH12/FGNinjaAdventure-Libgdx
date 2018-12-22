@@ -2,9 +2,11 @@ package com.fgdev.game.screens;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
-import com.fgdev.game.util.GamePreferences;
-import com.fgdev.game.world.WorldController;
-import com.fgdev.game.world.WorldRenderer;
+import com.fgdev.game.utils.Assets;
+import com.fgdev.game.utils.AudioManager;
+import com.fgdev.game.utils.GamePreferences;
+import com.fgdev.game.worlds.WorldController;
+import com.fgdev.game.worlds.WorldRenderer;
 
 public class GameScreen extends AbstractGameScreen {
 
@@ -36,6 +38,7 @@ public class GameScreen extends AbstractGameScreen {
     @Override
     public void show() {
         GamePreferences.instance.load();
+        AudioManager.instance.play(Assets.instance.music.background1);
         worldController = new WorldController(game);
         worldRenderer = new WorldRenderer(worldController);
         Gdx.input.setCatchBackKey(true);
@@ -62,6 +65,7 @@ public class GameScreen extends AbstractGameScreen {
     @Override
     public void hide() {
         worldRenderer.dispose();
+        worldController.dispose();
         Gdx.input.setCatchBackKey(false);
     }
 

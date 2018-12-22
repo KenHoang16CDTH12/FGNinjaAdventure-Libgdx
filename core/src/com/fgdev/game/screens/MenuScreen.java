@@ -14,12 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.fgdev.game.util.Assets;
+import com.fgdev.game.utils.Assets;
 import com.fgdev.game.screens.transitions.ScreenTransition;
 import com.fgdev.game.screens.transitions.ScreenTransitionFade;
-import com.fgdev.game.util.AudioManager;
-import com.fgdev.game.util.Constants;
-import com.fgdev.game.util.GamePreferences;
+import com.fgdev.game.utils.AudioManager;
+import com.fgdev.game.Constants;
+import com.fgdev.game.utils.GamePreferences;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -49,6 +49,7 @@ public class MenuScreen extends AbstractGameScreen {
     private CheckBox chkGirl;
     private CheckBox chkShowFpsCounter;
     private CheckBox chkUseMonoChromeShader;
+    private CheckBox chkDebug;
     // debug
     private final float DEBUG_REBUILD_INTERVAL = 5.0f;
     private boolean debugEnabled = false;
@@ -102,6 +103,7 @@ public class MenuScreen extends AbstractGameScreen {
     public void show() {
         stage = new Stage(new StretchViewport(Constants.VIEWPORT_GUI_WIDTH,
                 Constants.VIEWPORT_GUI_HEIGHT));
+        AudioManager.instance.play(Assets.instance.music.menuBackground);
         rebuildStage();
     }
 
@@ -189,9 +191,11 @@ public class MenuScreen extends AbstractGameScreen {
         return layer;
     }
     private Table buildOptionsWindowLayer () {
-        winOptions = new Window("Options", skinLibgdx);
+        winOptions = new Window("", skinLibgdx);
         // + Audio Settings: Sound/Music CheckBox and Volume Slider
         winOptions.add(buildOptWinAudioSettings()).row();
+        // + Character: Show option change character
+        winOptions.add(buildOptCharacter()).row();
         // + Debug: Show FPS Counter
         winOptions.add(buildOptWinDebug()).row();
         // + Separator and Buttons (Save, Cancel)
@@ -220,6 +224,7 @@ public class MenuScreen extends AbstractGameScreen {
         chkGirl.setChecked(prefs.isGirl);
         chkShowFpsCounter.setChecked(prefs.showFpsCounter);
         chkUseMonoChromeShader.setChecked(prefs.useMonochromeShader);
+        chkDebug.setChecked(prefs.debug);
     }
 
     private void saveSettings() {
@@ -231,6 +236,7 @@ public class MenuScreen extends AbstractGameScreen {
         prefs.isGirl = chkGirl.isChecked();
         prefs.showFpsCounter = chkShowFpsCounter.isChecked();
         prefs.useMonochromeShader = chkUseMonoChromeShader.isChecked();
+        prefs.debug = chkDebug.isChecked();
         prefs.save();
     }
 
@@ -248,8 +254,13 @@ public class MenuScreen extends AbstractGameScreen {
     }
 
     private void onPlayClicked () {
-        ScreenTransition transition = ScreenTransitionFade.init(0.75f);
-        game.setScreen(new GameScreen(game), transition);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ScreenTransition transition = ScreenTransitionFade.init(0.5f);
+                game.setScreen(new GameScreen(game), transition);
+            }
+        });
     }
 
     private void onOptionsClicked () {
@@ -262,7 +273,7 @@ public class MenuScreen extends AbstractGameScreen {
         Table tbl = new Table();
         // + Title: "Audio"
         tbl.pad(10, 10, 0, 10);
-        tbl.add(new Label("Audio", skinLibgdx, "default-font",
+        tbl.add(new Label("Audio", skinLibgdx, "font",
                 Color.ORANGE)).colspan(3);
         tbl.row();
         tbl.columnDefaults(0).padRight(10);
@@ -284,12 +295,12 @@ public class MenuScreen extends AbstractGameScreen {
         return tbl;
     }
 
-    private Table buildOptWinDebug () {
+    private Table buildOptCharacter () {
         Table tbl = new Table();
-        // + Title: "Debug"
+        // + Title: "Character"
         tbl.pad(10, 10, 0, 10);
-        tbl.add(new Label("Debug", skinLibgdx, "default-font",
-                Color.RED)).colspan(3);
+        tbl.add(new Label("Character", skinLibgdx, "font",
+                Color.GREEN)).colspan(3);
         tbl.row();
         tbl.columnDefaults(0).padRight(10);
         tbl.columnDefaults(1).padRight(10);
@@ -298,6 +309,18 @@ public class MenuScreen extends AbstractGameScreen {
         tbl.add(new Label("Girl", skinLibgdx));
         tbl.add(chkGirl);
         tbl.row();
+        return tbl;
+    }
+
+    private Table buildOptWinDebug () {
+        Table tbl = new Table();
+        // + Title: "Debug"
+        tbl.pad(10, 10, 0, 10);
+        tbl.add(new Label("Debug", skinLibgdx, "font",
+                Color.RED)).colspan(3);
+        tbl.row();
+        tbl.columnDefaults(0).padRight(10);
+        tbl.columnDefaults(1).padRight(10);
         // + Checkbox, "Show FPS Counter" label
         chkShowFpsCounter = new CheckBox("", skinLibgdx);
         tbl.add(new Label("Show FPS Counter", skinLibgdx));
@@ -307,6 +330,11 @@ public class MenuScreen extends AbstractGameScreen {
         chkUseMonoChromeShader = new CheckBox("", skinLibgdx);
         tbl.add(new Label("Use Monochrome Shader", skinLibgdx));
         tbl.add(chkUseMonoChromeShader);
+        tbl.row();
+        // + Checkbox, "Debug" label
+        chkDebug = new CheckBox("", skinLibgdx);
+        tbl.add(new Label("Debug", skinLibgdx));
+        tbl.add(chkDebug);
         tbl.row();
         return tbl;
     }

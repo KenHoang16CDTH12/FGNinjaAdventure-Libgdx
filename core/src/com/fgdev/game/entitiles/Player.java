@@ -2,31 +2,37 @@ package com.fgdev.game.entitiles;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.fgdev.game.util.Assets;
-import com.fgdev.game.util.AudioManager;
-import com.fgdev.game.util.Constants;
-import com.fgdev.game.util.GamePreferences;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
+import com.fgdev.game.entitiles.bullets.Kunai;
+import com.fgdev.game.utils.Assets;
+import com.fgdev.game.utils.AudioManager;
+import com.fgdev.game.Constants;
+import com.fgdev.game.utils.BodyFactory;
+import com.fgdev.game.utils.GamePreferences;
 
-import static com.fgdev.game.util.Constants.*;
+import static com.fgdev.game.Constants.*;
 
 public class Player extends Sprite {
+
     public enum State {
         IDDLE, RUN, JUMP, CLIMB,
         DEAD, GLIDE, JUMP_ATTACK,
         JUMP_THROW, ATTACK, SLIDE,
-        THROW,
+        THROW, DELAY
     }
     public State currentState;
     public State previousState;
     public World world;
     public Body body;
+    public BodyFactory bodyFactory;
     private Animation playerIddle;
+    private Animation playerDelay;
     private Animation playerRun;
     private Animation playerJump;
     private Animation playerClimb;
@@ -43,10 +49,10 @@ public class Player extends Sprite {
     private boolean isDead;
     private boolean isSlide;
     private boolean isClimb;
-    private boolean isJumpAttack;
-    private boolean isJumpThrow;
     private boolean isAttack;
     private boolean isThrow;
+    private boolean isDelay;
+    private boolean canThrow;
 
     private boolean timeToRedefinePlayer;
     private boolean timeTodefinePlayerAttackRight;
@@ -60,26 +66,35 @@ public class Player extends Sprite {
     private final float JUMP_TIME_MIN = 0.1f;
     private final float JUMP_TIME_OFFSET_FLYING = JUMP_TIME_MAX - 0.018f;
 
+    // Shoot
+    private Array<Kunai> kunaies;
+
+    private boolean isOnGround;
+
     public Player(World world) {
         this.world = world;
+        bodyFactory = BodyFactory.getInstance(world);
         currentState = State.IDDLE;
         previousState = State.IDDLE;
         stateTimer = 0;
-        runningRight = true;
+        timeJumping = 0;
         isDead = false;
         isSlide = false;
         isClimb = false;
-        isJumpAttack = false;
-        isJumpThrow = false;
         isAttack = false;
         isThrow = false;
+        isDelay = false;
+        canThrow = true;
+        isOnGround = false;
+        runningRight = true;
         isGirl = GamePreferences.instance.isGirl;
-        timeJumping = 0;
         // Power-ups
         hasFeatherPowerup = false;
         timeLeftFeatherPowerup = 0;
         // Iddle
         playerIddle = Assets.instance.player.animIddle;
+        // Delay
+        playerDelay = Assets.instance.player.animIddle;
         // Run
         playerRun = Assets.instance.player.animRun;
         // Jump
@@ -102,174 +117,13 @@ public class Player extends Sprite {
         playerThrow = Assets.instance.player.animThrow;
         definePlayer();
         setRegion((TextureRegion) playerIddle.getKeyFrame(stateTimer));
-    }
-
-    private void definePlayer() {
-        // set up box2d stuff
-        BodyDef bodyDef = new BodyDef();
-        FixtureDef fixtureDef = new FixtureDef();
-        PolygonShape shape = new PolygonShape();
-        // create player
-        bodyDef.position.set(100 / PPM, 500 / PPM);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        body = world.createBody(bodyDef);
-        shape.setAsBox(40 / PPM, 60 / PPM);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = PLAYER_BIT;
-        fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-        body.createFixture(fixtureDef).setUserData(this);
-//        //create right sensor
-//        shape.setAsBox(2 / PPM, 65 / PPM, new Vector2(40 / PPM, 0), 0);
-//        fixtureDef.shape = shape;
-//        fixtureDef.filter.categoryBits = PLAYER_BIT;
-//        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-//        fixtureDef.isSensor = true;
-//        body.createFixture(fixtureDef).setUserData(this);
-//        //create left sensor
-//        shape.setAsBox(2 / PPM, 65 / PPM, new Vector2(-40 / PPM, 0), 0);
-//        fixtureDef.shape = shape;
-//        fixtureDef.filter.categoryBits = PLAYER_BIT;
-//        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-//        fixtureDef.isSensor = true;
-//        body.createFixture(fixtureDef).setUserData(this);
-//        // create head sensor
-//        shape.setAsBox(40 / PPM, 10 / PPM, new Vector2(0, 55 / PPM), 0);
-//        fixtureDef.shape = shape;
-//        fixtureDef.filter.categoryBits = PLAYER_BIT;
-//        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-//        fixtureDef.isSensor = true;
-//        body.createFixture(fixtureDef).setUserData(this);
-        // create foot sensor
-        shape.setAsBox(40 / PPM, 10 / PPM, new Vector2(0, -65 / PPM), 0);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = PLAYER_BIT;
-        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-        fixtureDef.isSensor = true;
-        body.createFixture(fixtureDef).setUserData(this);
-        shape.dispose();
-    }
-
-    private void reDefinePlayer() {
-        Vector2 currentPosition = body.getPosition();
-        world.destroyBody(body);
-        // set up box2d stuff
-        BodyDef bodyDef = new BodyDef();
-        FixtureDef fixtureDef = new FixtureDef();
-        PolygonShape shape = new PolygonShape();
-        // create player
-        bodyDef.position.set(currentPosition);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        body = world.createBody(bodyDef);
-        shape.setAsBox(40 / PPM, 60 / PPM);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = PLAYER_BIT;
-        fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-        body.createFixture(fixtureDef).setUserData(this);
-//        //create right sensor
-//        shape.setAsBox(2 / PPM, 65 / PPM, new Vector2(40 / PPM, 0), 0);
-//        fixtureDef.shape = shape;
-//        fixtureDef.filter.categoryBits = PLAYER_BIT;
-//        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-//        fixtureDef.isSensor = true;
-//        body.createFixture(fixtureDef).setUserData(this);
-//        //create left sensor
-//        shape.setAsBox(2 / PPM, 65 / PPM, new Vector2(-40 / PPM, 0), 0);
-//        fixtureDef.shape = shape;
-//        fixtureDef.filter.categoryBits = PLAYER_BIT;
-//        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-//        fixtureDef.isSensor = true;
-//        body.createFixture(fixtureDef).setUserData(this);
-//        // create head sensor
-//        shape.setAsBox(40 / PPM, 10 / PPM, new Vector2(0, 55 / PPM), 0);
-//        fixtureDef.shape = shape;
-//        fixtureDef.filter.categoryBits = PLAYER_BIT;
-//        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-//        fixtureDef.isSensor = true;
-//        body.createFixture(fixtureDef).setUserData(this);
-        // create foot sensor
-        shape.setAsBox(40 / PPM, 10 / PPM, new Vector2(0, -65 / PPM), 0);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = PLAYER_BIT;
-        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-        fixtureDef.isSensor = true;
-        body.createFixture(fixtureDef).setUserData(this);
-        timeToRedefinePlayer = false;
-        shape.dispose();
-    }
-
-    private void definePlayerAttackRight() {
-        Vector2 currentPosition = body.getPosition();
-        world.destroyBody(body);
-        // set up box2d stuff
-        BodyDef bodyDef = new BodyDef();
-        FixtureDef fixtureDef = new FixtureDef();
-        PolygonShape shape = new PolygonShape();
-        // create player
-        bodyDef.position.set(currentPosition);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        body = world.createBody(bodyDef);
-        shape.setAsBox(40 / PPM, 60 / PPM);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = PLAYER_BIT;
-        fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-        body.createFixture(fixtureDef).setUserData(this);
-        // create foot sensor
-        shape.setAsBox(40 / PPM, 10 / PPM, new Vector2(0, -65 / PPM), 0);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = PLAYER_BIT;
-        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-        fixtureDef.isSensor = true;
-        body.createFixture(fixtureDef).setUserData(this);
-        //create right attack sensor
-        shape.setAsBox(20 / PPM, 65 / PPM, new Vector2(61 / PPM, 0), 0);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = ATTACK_BIT;
-        fixtureDef.filter.maskBits = CRATE_BIT;
-        fixtureDef.isSensor = true;
-        Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData(this);
-        timeTodefinePlayerAttackRight = false;
-        shape.dispose();
-    }
-
-    private void definePlayerAttackLeft() {
-        Vector2 currentPosition = body.getPosition();
-        world.destroyBody(body);
-        // set up box2d stuff
-        BodyDef bodyDef = new BodyDef();
-        FixtureDef fixtureDef = new FixtureDef();
-        PolygonShape shape = new PolygonShape();
-        // create player
-        bodyDef.position.set(currentPosition);
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        body = world.createBody(bodyDef);
-        shape.setAsBox(40 / PPM, 60 / PPM);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = PLAYER_BIT;
-        fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-        body.createFixture(fixtureDef).setUserData(this);
-        // create foot sensor
-        shape.setAsBox(40 / PPM, 10 / PPM, new Vector2(0, -65 / PPM), 0);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = PLAYER_BIT;
-        fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
-        fixtureDef.isSensor = true;
-        body.createFixture(fixtureDef).setUserData(this);
-        //create left attack sensor
-        shape.setAsBox(20 / PPM, 65 / PPM, new Vector2(-61 / PPM, 0), 0);
-        fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = ATTACK_BIT;
-        fixtureDef.filter.maskBits = CRATE_BIT;
-        fixtureDef.isSensor = true;
-        Fixture fixture = body.createFixture(fixtureDef);
-        fixture.setUserData(this);
-        timeTodefinePlayerAttackLeft = false;
-        shape.dispose();
+        // kunai
+        kunaies = new Array<Kunai>();
     }
 
     public void update(float dt) {
         setBoundForRegion();
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2 - 0.05f);
+        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2 - 0.1f);
         setRegion(getFrame(dt));
         if (timeTodefinePlayerAttackRight)
             definePlayerAttackRight();
@@ -277,6 +131,11 @@ public class Player extends Sprite {
             definePlayerAttackLeft();
         if (timeToRedefinePlayer)
             reDefinePlayer();
+        for (Kunai kunai: kunaies) {
+            kunai.update(dt);
+            if (kunai.isDestroyed())
+                kunaies.removeValue(kunai, true);
+        }
     }
 
     private void setBoundForRegion() {
@@ -336,7 +195,7 @@ public class Player extends Sprite {
         //depending on the state, get corresponding animation KeyFrame
         switch (currentState) {
             case RUN:
-                region = (TextureRegion) playerRun.getKeyFrame(stateTimer);
+                region = (TextureRegion) playerRun.getKeyFrame(stateTimer, true);
                 break;
             case JUMP:
                 region = (TextureRegion) playerJump.getKeyFrame(stateTimer);
@@ -350,23 +209,29 @@ public class Player extends Sprite {
                 region = (TextureRegion) playerDead.getKeyFrame(stateTimer);
                 break;
             case GLIDE:
-                region = (TextureRegion) playerGlide.getKeyFrame(stateTimer);
+                region = (TextureRegion) playerGlide.getKeyFrame(stateTimer, true);
                 break;
             case JUMP_ATTACK:
                 region = (TextureRegion) playerJumpAttack.getKeyFrame(stateTimer);
-                if (playerJumpAttack.isAnimationFinished(stateTimer))
-                    isJumpAttack = false;
+                if (playerJumpAttack.isAnimationFinished(stateTimer)) {}
                 break;
             case JUMP_THROW:
                 region = (TextureRegion) playerJumpThrow.getKeyFrame(stateTimer);
-                if (playerJumpThrow.isAnimationFinished(stateTimer))
-                    isJumpThrow = false;
+                if (playerJumpThrow.isAnimationFinished(stateTimer)) {
+                    if (!canThrow && !world.isLocked())
+                        kunaies.add(new Kunai(this, body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false));
+                    canThrow = true;
+                }
                 break;
             case ATTACK:
                 region = (TextureRegion) playerAttack.getKeyFrame(stateTimer);
                 if (playerAttack.isAnimationFinished(stateTimer)) {
                     isAttack = false;
-                    timeToRedefinePlayer = true;
+                    isDelay = true;
+                    if (runningRight)
+                        timeTodefinePlayerAttackRight = true;
+                    else
+                        timeTodefinePlayerAttackLeft = true;
                 }
                 break;
             case SLIDE:
@@ -376,12 +241,21 @@ public class Player extends Sprite {
                 break;
             case THROW:
                 region = (TextureRegion) playerThrow.getKeyFrame(stateTimer);
-                if (playerThrow.isAnimationFinished(stateTimer))
+                if (playerThrow.isAnimationFinished(stateTimer)) {
+                    canThrow = true;
                     isThrow = false;
+                }
+                break;
+            case DELAY:
+                region = (TextureRegion) playerDelay.getKeyFrame(stateTimer);
+                if (playerDelay.isAnimationFinished(stateTimer)) {
+                    isDelay = false;
+                    timeToRedefinePlayer = true;
+                }
                 break;
             case IDDLE:
             default:
-                region = (TextureRegion) playerIddle.getKeyFrame(stateTimer);
+                region = (TextureRegion) playerIddle.getKeyFrame(stateTimer, true);
                 break;
         }
         //if player is running left and the texture isnt facing left... flip it.
@@ -419,20 +293,20 @@ public class Player extends Sprite {
                 return State.GLIDE;
             else if ((body.getLinearVelocity().y > 0 && currentState == State.JUMP) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP))
                 return State.JUMP;
+            else if ((body.getLinearVelocity().y > 0 && currentState == State.JUMP_THROW) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP_THROW))
+                return State.JUMP_THROW;
             else if (body.getLinearVelocity().x != 0)
                 return State.RUN;
             else if (isSlide)
                 return State.SLIDE;
             else if (isClimb)
                 return State.CLIMB;
-            else if (isJumpAttack)
-                return State.JUMP_ATTACK;
-            else if (isJumpThrow)
-                return State.JUMP_THROW;
             else if (isAttack)
                 return State.ATTACK;
             else if (isThrow)
                 return State.THROW;
+            else if (isDelay)
+                return State.DELAY;
                 // if none of these return then he must be standing
             else
                 return State.IDDLE;
@@ -442,11 +316,12 @@ public class Player extends Sprite {
         if (currentState != State.JUMP && currentState != State.ATTACK) {
             if (currentState != State.GLIDE) {
                 if (hasFeatherPowerup) {
-                    AudioManager.instance.play(Assets.instance.sounds.jumpWithFeather);
+                    AudioManager.instance.play(Assets.instance.sounds.glide);
                     body.applyLinearImpulse(new Vector2(0, 1.5f), body.getWorldCenter(), true);
                     currentState = State.GLIDE;
-                } else {
-                    AudioManager.instance.play(Assets.instance.sounds.jump);
+                }
+                else if (currentState != State.JUMP_THROW) {
+                    // AudioManager.instance.play(Assets.instance.sounds.jump);
                     body.applyLinearImpulse(new Vector2(0, 7f), body.getWorldCenter(), true);
                     currentState = State.JUMP;
                 }
@@ -477,34 +352,29 @@ public class Player extends Sprite {
         isClimb = true;
     }
 
-    public void jumpAttack() {
-        if (currentState != State.JUMP_ATTACK) {
-            body.applyLinearImpulse(new Vector2(0, 7f), body.getWorldCenter(), true);
-            currentState = State.JUMP_ATTACK;
-            isJumpAttack = true;
-        }
-    }
-
     public void jumpThrow() {
-        if (currentState != State.JUMP_THROW) {
+        if (currentState != State.JUMP
+                && currentState != State.JUMP_THROW
+                && currentState != State.GLIDE) {
+            // AudioManager.instance.play(Assets.instance.sounds.jump);
             body.applyLinearImpulse(new Vector2(0, 7f), body.getWorldCenter(), true);
             currentState = State.JUMP_THROW;
-            isJumpThrow = true;
+            canThrow = false;
         }
     }
 
     public void attack() {
         if (currentState != State.ATTACK && currentState != State.GLIDE && currentState != State.JUMP) {
             isAttack = true;
-            if (runningRight)
-                timeTodefinePlayerAttackRight = true;
-            else
-                timeTodefinePlayerAttackLeft = true;
         }
     }
 
     public void attackThrow() {
-        isThrow = true;
+        if (currentState != State.JUMP_THROW && currentState != State.JUMP && currentState != State.GLIDE && currentState != State.ATTACK && canThrow && !world.isLocked()) {
+            kunaies.add(new Kunai(this, body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false));
+            isThrow =true;
+            canThrow = false;
+        }
     }
 
     public Body getBody() {
@@ -530,4 +400,82 @@ public class Player extends Sprite {
     public boolean hasFeatherPowerup() {
         return hasFeatherPowerup && timeLeftFeatherPowerup > 0;
     }
+
+    private void makeBoxPlayerBody(float posx, float posy) {
+        float width = isGirl ? (56 - 10) / PPM : (54 - 10) / PPM;
+        float height = isGirl ? (78 - 10) / PPM : (69 - 10) / PPM;
+        // create player
+        body = bodyFactory.makeBoxPolyBody(
+                posx,
+                posy,
+                width,
+                height,
+                BodyFactory.PLAYER,
+                BodyDef.BodyType.DynamicBody,
+                this
+        );
+        // create foot sensor
+        bodyFactory.makeObjectSensor(body,
+                width,
+                10 / PPM,
+                new Vector2(0, -height - (7 / PPM)),
+                0,
+                BodyFactory.PLAYER_FOOT,
+                this
+        );
+    }
+
+    private void definePlayer() {
+        makeBoxPlayerBody(100 / PPM, 500 / PPM);
+    }
+
+    private void reDefinePlayer() {
+        Vector2 currentPosition = body.getPosition();
+        world.destroyBody(body);
+        makeBoxPlayerBody(currentPosition.x, currentPosition.y);
+        timeToRedefinePlayer = false;
+    }
+
+    private void definePlayerAttackRight() {
+        Vector2 currentPosition = body.getPosition();
+        world.destroyBody(body);
+        makeBoxPlayerBody(currentPosition.x, currentPosition.y);
+        // create right attack sensor
+        bodyFactory.makeObjectSensor(body,
+                20 / PPM,
+                60 / PPM,
+                new Vector2(61 / PPM, 0),
+                0,
+                BodyFactory.PLAYER_ATTACK,
+                this
+        );
+        timeTodefinePlayerAttackRight = false;
+    }
+
+    private void definePlayerAttackLeft() {Vector2 currentPosition = body.getPosition();
+        world.destroyBody(body);
+        makeBoxPlayerBody(currentPosition.x, currentPosition.y);
+        // create left attack sensor
+        bodyFactory.makeObjectSensor(body,
+                20 / PPM,
+                60 / PPM,
+                new Vector2(-61 / PPM, 0),
+                0,
+                BodyFactory.PLAYER_ATTACK,
+                this
+        );
+        timeTodefinePlayerAttackLeft = false;
+    }
+
+    @Override
+    public void draw(Batch batch) {
+        super.draw(batch);
+        for(Kunai kunai : kunaies)
+            kunai.draw(batch);
+    }
+
+    public void setOnGround(boolean onGround) {
+        isOnGround = onGround;
+    }
+
 }

@@ -3,7 +3,7 @@ package com.fgdev.game.screens;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.fgdev.game.util.Assets;
+import com.fgdev.game.utils.Assets;
 
 public abstract class AbstractGameScreen implements Screen {
 

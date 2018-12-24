@@ -1,6 +1,6 @@
 package com.fgdev.game.entitiles;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -8,29 +8,25 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Disposable;
 import com.fgdev.game.entitiles.bullets.Kunai;
-import com.fgdev.game.utils.Assets;
-import com.fgdev.game.utils.AudioManager;
+import com.fgdev.game.utils.*;
 import com.fgdev.game.Constants;
-import com.fgdev.game.utils.BodyFactory;
-import com.fgdev.game.utils.GamePreferences;
 
 import static com.fgdev.game.Constants.*;
 
 public class Player extends Sprite {
 
-    public enum State {
+    private enum State {
         IDDLE, RUN, JUMP, CLIMB,
         DEAD, GLIDE, JUMP_ATTACK,
         JUMP_THROW, ATTACK, SLIDE,
         THROW, DELAY
     }
-    public State currentState;
-    public State previousState;
-    public World world;
-    public Body body;
-    public BodyFactory bodyFactory;
+    private State currentState;
+    private State previousState;
+    private World world;
+    private Body body;
+    private BodyFactory bodyFactory;
     private Animation playerIddle;
     private Animation playerDelay;
     private Animation playerRun;
@@ -58,13 +54,11 @@ public class Player extends Sprite {
     private boolean timeTodefinePlayerAttackRight;
     private boolean timeTodefinePlayerAttackLeft;
 
-    public float timeJumping;
-    public boolean hasFeatherPowerup;
-    public float timeLeftFeatherPowerup;
+    private float timeJumping;
+    private boolean hasFeatherPowerup;
+    private float timeLeftFeatherPowerup;
 
     private final float JUMP_TIME_MAX = 0.3f;
-    private final float JUMP_TIME_MIN = 0.1f;
-    private final float JUMP_TIME_OFFSET_FLYING = JUMP_TIME_MAX - 0.018f;
 
     // Shoot
     private Array<Kunai> kunaies;
@@ -198,7 +192,7 @@ public class Player extends Sprite {
                 region = (TextureRegion) playerRun.getKeyFrame(stateTimer, true);
                 break;
             case JUMP:
-                region = (TextureRegion) playerJump.getKeyFrame(stateTimer);
+                region = (TextureRegion) playerJump.getKeyFrame(stateTimer, true);
                 break;
             case CLIMB:
                 region = (TextureRegion) playerClimb.getKeyFrame(stateTimer);
@@ -207,6 +201,7 @@ public class Player extends Sprite {
                 break;
             case DEAD:
                 region = (TextureRegion) playerDead.getKeyFrame(stateTimer);
+                if (playerDead.isAnimationFinished(stateTimer)) { }
                 break;
             case GLIDE:
                 region = (TextureRegion) playerGlide.getKeyFrame(stateTimer, true);
@@ -287,8 +282,9 @@ public class Player extends Sprite {
     }
 
     private State getState() {
-            if (isDead)
+            if (isDead) {
                 return State.DEAD;
+            }
             else if ((body.getLinearVelocity().y > 0 && currentState == State.GLIDE) || (body.getLinearVelocity().y < 0 && previousState == State.GLIDE) && hasFeatherPowerup)
                 return State.GLIDE;
             else if ((body.getLinearVelocity().y > 0 && currentState == State.JUMP) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP))
@@ -336,16 +332,17 @@ public class Player extends Sprite {
 
     public void right() {
         if (currentState != State.ATTACK && currentState != State.THROW)
-            body.applyLinearImpulse(new Vector2(0.1f, 0), body.getWorldCenter(), true);
+            body.applyLinearImpulse(new Vector2(SPEED_PLAYER_X, 0), body.getWorldCenter(), true);
     }
 
     public void left() {
         if (currentState != State.ATTACK && currentState != State.THROW)
-            body.applyLinearImpulse(new Vector2(-0.1f, 0), body.getWorldCenter(), true);
+            body.applyLinearImpulse(new Vector2(-SPEED_PLAYER_X, 0), body.getWorldCenter(), true);
     }
 
     public void down() {
         isSlide = true;
+        setRegion((TextureRegion) playerSlide.getKeyFrame(stateTimer));
     }
 
     public void climb() {
@@ -366,13 +363,15 @@ public class Player extends Sprite {
     public void attack() {
         if (currentState != State.ATTACK && currentState != State.GLIDE && currentState != State.JUMP) {
             isAttack = true;
+            setRegion((TextureRegion) playerAttack.getKeyFrame(stateTimer));
         }
     }
 
     public void attackThrow() {
         if (currentState != State.JUMP_THROW && currentState != State.JUMP && currentState != State.GLIDE && currentState != State.ATTACK && canThrow && !world.isLocked()) {
+            setRegion((TextureRegion) playerThrow.getKeyFrame(stateTimer));
             kunaies.add(new Kunai(this, body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false));
-            isThrow =true;
+            isThrow = true;
             canThrow = false;
         }
     }
@@ -415,12 +414,12 @@ public class Player extends Sprite {
                 this
         );
         // create foot sensor
-        bodyFactory.makeObjectSensor(body,
+        bodyFactory.makeShapeSensor(body,
                 width,
                 10 / PPM,
                 new Vector2(0, -height - (7 / PPM)),
                 0,
-                BodyFactory.PLAYER_FOOT,
+                BodyFactory.PLAYER_SENSOR,
                 this
         );
     }
@@ -441,7 +440,7 @@ public class Player extends Sprite {
         world.destroyBody(body);
         makeBoxPlayerBody(currentPosition.x, currentPosition.y);
         // create right attack sensor
-        bodyFactory.makeObjectSensor(body,
+        bodyFactory.makeShapeSensor(body,
                 20 / PPM,
                 60 / PPM,
                 new Vector2(61 / PPM, 0),
@@ -452,11 +451,12 @@ public class Player extends Sprite {
         timeTodefinePlayerAttackRight = false;
     }
 
-    private void definePlayerAttackLeft() {Vector2 currentPosition = body.getPosition();
+    private void definePlayerAttackLeft() {
+        Vector2 currentPosition = body.getPosition();
         world.destroyBody(body);
         makeBoxPlayerBody(currentPosition.x, currentPosition.y);
         // create left attack sensor
-        bodyFactory.makeObjectSensor(body,
+        bodyFactory.makeShapeSensor(body,
                 20 / PPM,
                 60 / PPM,
                 new Vector2(-61 / PPM, 0),
@@ -465,6 +465,23 @@ public class Player extends Sprite {
                 this
         );
         timeTodefinePlayerAttackLeft = false;
+    }
+
+    public void playerDie() {
+        if(!isDead) {
+            body.getLinearVelocity().x = 0;
+            AudioManager.instance.play(Assets.instance.sounds.liveLost);
+            ValueManager.instance.lives--;
+            if (!isPlayerFalling())
+                ValueManager.instance.timeLeftLiveLost = TIME_DELAY_LIVE_LOST;
+            else
+                ValueManager.instance.timeLeftLiveLost = TIME_DELAY_LIVE_LOST - 2;
+            isDead = true;
+        }
+    }
+
+    public boolean isPlayerFalling () {
+        return getPosition().y < -5;
     }
 
     @Override
@@ -478,4 +495,19 @@ public class Player extends Sprite {
         isOnGround = onGround;
     }
 
+    public World getWorld() {
+        return world;
+    }
+
+    public float getTimeLeftFeatherPowerup() {
+        return timeLeftFeatherPowerup;
+    }
+
+    public void setDead(boolean dead) {
+        isDead = dead;
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
 }

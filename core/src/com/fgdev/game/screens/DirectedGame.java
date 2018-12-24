@@ -22,7 +22,6 @@ public abstract class DirectedGame implements ApplicationListener {
     private float t;
     private ScreenTransition screenTransition;
     private float accumulator;
-    public WorldContactListener worldContactListener;
 
     public void setScreen (AbstractGameScreen screen) {
         setScreen(screen, null);

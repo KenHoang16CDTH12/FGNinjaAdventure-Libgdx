@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.math.Ellipse;
 import com.badlogic.gdx.physics.box2d.*;
+import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.utils.AudioManager;
@@ -15,7 +16,7 @@ import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.*;
 
-public class Coin extends TileObject {
+public class Coin extends ItemObject {
 
     private static String TAG = Coin.class.getName();
 
@@ -23,8 +24,8 @@ public class Coin extends TileObject {
 
     private float stateTimer;
 
-    public Coin(World world, MapObject object) {
-        super(world, object);
+    public Coin(World world, MapObject object, ScoreIndicator scoreIndicator) {
+        super(world, object, scoreIndicator);
         coinAnimation = Assets.instance.goldCoin.animGoldCoin;
         stateTimer = 0;
         setBounds(getX(), getY(), 56 / PPM, 56 / PPM);
@@ -53,15 +54,15 @@ public class Coin extends TileObject {
     }
 
     @Override
-    public void onHit(Player player) {
-        Gdx.app.log(TAG, "Collision");
+    public void collected(Player player) {
         ValueManager.instance.score += score();
+        scoreIndicator.addScoreItem(getX(), getY(), score());
         AudioManager.instance.play(Assets.instance.sounds.pickupCoin);
         destroy();
     }
 
     @Override
     public int score() {
-        return 100;
+        return 80;
     }
 }

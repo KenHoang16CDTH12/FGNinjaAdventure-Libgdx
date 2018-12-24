@@ -61,10 +61,10 @@ public class Clouds extends GameObject {
 
     @Override
     public void update(float deltaTime) {
-        for (int i = clouds.size - 1; i>= 0; i--) {
+        for (int i = clouds.size - 1; i >= 0; i--) {
             Cloud cloud = clouds.get(i);
             cloud.update(deltaTime);
-            if (cloud.position.x< -10) {
+            if (cloud.position.x < -10) {
                 // cloud moved outside of world.
                 // destroy and spawn new cloud at end of level.
                 clouds.removeIndex(i);
@@ -83,10 +83,10 @@ public class Clouds extends GameObject {
 
         private TextureRegion regCloud;
 
-        public Cloud() {
+        private Cloud() {
         }
 
-        public void setRegion (TextureRegion region) {
+        private void setRegion (TextureRegion region) {
             regCloud = region;
         }
 

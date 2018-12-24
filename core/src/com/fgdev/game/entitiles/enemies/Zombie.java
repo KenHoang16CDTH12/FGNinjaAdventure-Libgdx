@@ -1,74 +1,99 @@
 package com.fgdev.game.entitiles.enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.physics.box2d.*;
+import com.fgdev.game.entitiles.Player;
+import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.BodyFactory;
+import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.PPM;
 
-public class Zombie extends Sprite {
+public class Zombie extends Enemy {
 
     public static final String TAG = Zombie.class.getName();
 
     public static final int MALE = 0;
     public static final int FEMALE = 1;
 
-    public int type;
-
     public enum State {
         IDLE, WALK, DEAD, ATTACK,
     }
-    public State currentState;
-    public State previousState;
-    public World world;
-    public Body body;
-    public MapObject mapObject;
-    public BodyFactory bodyFactory;
+
+    private State currentState;
+    private State previousState;
     private Animation zombieIdle;
     private Animation zombieWalk;
     private Animation zombieDead;
     private Animation zombieAttack;
-    private boolean runningRight;
+
+    private float speed;
+
+    private boolean isWalk;
     private boolean isDead;
     private boolean isAttack;
-    private float stateTimer;
 
-    public Zombie(World world, MapObject mapObject, int type) {
-        this.world = world;
-        this.mapObject = mapObject;
-        this.type = type;
-        bodyFactory = BodyFactory.getInstance(world);
+    private float timeDelayDie = 3;
+
+    public Zombie(World world, MapObject mapObject, ScoreIndicator scoreIndicator, int type) {
+        super(world, mapObject, type, scoreIndicator);
         currentState = State.IDLE;
         previousState = State.IDLE;
-        stateTimer = 0;
+        isWalk = true;
         isDead = false;
         isAttack = false;
+        speed = 1f;
         Assets.AssetZombie zombie = Assets.instance.zombie;
         zombieIdle = type == MALE ? zombie.animMaleIdle : zombie.animFeMaleIdle;
         zombieWalk = type == MALE ? zombie.animMaleWalk : zombie.animFeMaleWalk;
         zombieDead = type == MALE ? zombie.animMaleDead : zombie.animFeMaleDead;
         zombieAttack = type == MALE ? zombie.animMaleAttack : zombie.animFeMaleAttack;
-        defineZombie();
         setRegion((TextureRegion) zombieIdle.getKeyFrame(stateTimer));
-        body.setActive(false);
     }
 
 
     public void update(float dt) {
+        if (destroyed) {
+            return;
+        }
+        if (isDead) {
+            timeDelayDie -= dt;
+            if (timeDelayDie < 0) {
+                queueDestroy();
+                // Sound
+                ValueManager.instance.score += score();
+                scoreIndicator.addScoreItem(getX(), getY(), score());
+            }
+        }
+        if (toBeDestroyed) {
+            world.destroyBody(body);
+            setBounds(0, 0, 0, 0);
+            destroyed = true;
+            return;
+        }
+        if (!body.isActive()) {
+            return;
+        }
         setBoundForRegion();
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         setRegion(getFrame(dt));
+    }
+
+    private void walking() {
+        checkMovingDirection();
+        float velocityY = body.getLinearVelocity().y;
+        if (runningRight) {
+            body.setLinearVelocity(new Vector2(speed, velocityY));
+        }
+        else {
+            body.setLinearVelocity(new Vector2(-speed, velocityY));
+        }
     }
 
 
@@ -107,8 +132,7 @@ public class Zombie extends Sprite {
                 region = (TextureRegion) zombieDead.getKeyFrame(stateTimer);
                 break;
             case ATTACK:
-                region = (TextureRegion) zombieAttack.getKeyFrame(stateTimer);
-                if (zombieAttack.isAnimationFinished(stateTimer)) { }
+                region = (TextureRegion) zombieAttack.getKeyFrame(stateTimer, true);
                 break;
             case IDLE:
             default:
@@ -126,6 +150,10 @@ public class Zombie extends Sprite {
             runningRight = true;
         }
 
+        if (isWalk && !isAttack) {
+            walking();
+        }
+
         //if the current state is the same as the previous state increase the state timer.
         //otherwise the state has changed and we need to reset timer.
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
@@ -133,6 +161,7 @@ public class Zombie extends Sprite {
         previousState = currentState;
         return region;
     }
+
 
     private State getState() {
         if (isDead)
@@ -147,30 +176,37 @@ public class Zombie extends Sprite {
     }
 
     private void makeBoxZombieBody(float posx, float posy) {
-        float width = type == MALE ? (69 - 25) / PPM : (78 - 25)/ PPM;
-        float height = type == MALE ? (83 - 25) / PPM : (86 - 25) / PPM;
+        float width = type == MALE ? (69 - 30) / PPM : (78 - 30)/ PPM;
+        float height = type == MALE ? (83 - 30) / PPM : (86 - 30) / PPM;
         // create zombie
         body = bodyFactory.makeBoxPolyBody(
                 posx,
                 posy,
                 width,
                 height,
-                BodyFactory.ZOMBIE,
+                BodyFactory.ZOMBIE_SENSOR,
                 BodyDef.BodyType.DynamicBody,
                 this
         );
         // create foot sensor
-        bodyFactory.makeObjectSensor(body,
+        bodyFactory.makeShapeSensor(body,
                 width,
                 10 / PPM,
                 new Vector2(0, (-height - 70) / PPM),
                 0,
-                BodyFactory.ZOMBIE_FOOT,
+                BodyFactory.ZOMBIE_SENSOR,
+                this
+        );
+        // create keep shape
+        bodyFactory.makeEdgeSensor(body,
+                new Vector2(0, (-height - 70) / PPM),
+                new Vector2(6.8f / PPM / 6, 6.8f / PPM * 3),
+                BodyFactory.ZOMBIE,
                 this
         );
     }
 
-    private void defineZombie() {
+    protected void defineEnemy() {
         Rectangle rect = ((RectangleMapObject) mapObject).getRectangle();
         makeBoxZombieBody(
                 (rect.x + rect.width / 2) / PPM,
@@ -178,11 +214,31 @@ public class Zombie extends Sprite {
         );
     }
 
-    public Body getBody() {
-        return body;
+    @Override
+    public int score() {
+        return 200;
     }
 
-    public Vector2 getPosition() {
-        return body.getPosition();
+    @Override
+    public void killed() {
+        setRegion((TextureRegion) zombieDead.getKeyFrame(stateTimer));
+        isDead = true;
+        isWalk = false;
+        becomeDead();
     }
+
+    public void zombieAttack(Player player) {
+        setRegion((TextureRegion) zombieAttack.getKeyFrame(stateTimer));
+        player.playerDie();
+        isAttack = true;
+        isWalk = false;
+        body.getLinearVelocity().x = 0;
+    }
+
+    public void zombieStopAttack(Player player) {
+        setRegion((TextureRegion) zombieIdle.getKeyFrame(stateTimer));
+        isWalk = true;
+        isAttack = false;
+    }
+
 }

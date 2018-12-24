@@ -25,7 +25,7 @@ public class Kunai extends Sprite {
     public Kunai(Player player, float x, float y, boolean isDirectionRight) {
         this.player = player;
         this.isDirectionRight = isDirectionRight;
-        bodyFactory = BodyFactory.getInstance(player.world);
+        bodyFactory = BodyFactory.getInstance(player.getWorld());
         kunai = Assets.instance.player.kunai;
         defineKunai(x, y);
         setRegion(kunai);
@@ -40,7 +40,7 @@ public class Kunai extends Sprite {
                 12 / PPM,
                 BodyFactory.KUNAI,
                 BodyDef.BodyType.KinematicBody,
-                player
+                this
         );
         body.setLinearVelocity(new Vector2(isDirectionRight ? 10 : -10,0));
     }
@@ -50,7 +50,7 @@ public class Kunai extends Sprite {
         setRegion(getFrame(dt));
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
         if((stateTime > 3 || setToDestroy) && !destroyed) {
-            player.world.destroyBody(body);
+            player.getWorld().destroyBody(body);
             destroyed = true;
         }
 

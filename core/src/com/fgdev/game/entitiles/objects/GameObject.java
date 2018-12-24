@@ -9,22 +9,22 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Disposable;
 
 public abstract class GameObject {
-    public Body body;
-    public Vector2 position;
-    public Vector2 dimension;
-    public Vector2 origin;
-    public Vector2 scale;
-    public float rotation;
+    protected Body body;
+    protected Vector2 position;
+    protected Vector2 dimension;
+    protected Vector2 origin;
+    protected Vector2 scale;
+    protected float rotation;
 
-    public Vector2 velocity;
-    public Vector2 terminalVelocity;
-    public Vector2 friction;
+    protected Vector2 velocity;
+    protected Vector2 terminalVelocity;
+    protected Vector2 friction;
 
-    public Vector2 acceleration;
-    public Rectangle bounds;
+    protected Vector2 acceleration;
+    protected Rectangle bounds;
 
-    public float stateTime;
-    public Animation animation;
+    protected float stateTime;
+    protected Animation animation;
 
     public GameObject() {
         position = new Vector2();
@@ -97,5 +97,13 @@ public abstract class GameObject {
         // positive or negative terminal velocity
         velocity.y = MathUtils.clamp(velocity.y, -
                 terminalVelocity.y, terminalVelocity.y);
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public Vector2 getDimension() {
+        return dimension;
     }
 }

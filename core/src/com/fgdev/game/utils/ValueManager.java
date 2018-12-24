@@ -13,6 +13,7 @@ public class ValueManager {
     public float livesVisual;
     public float scoreVisual;
     public float timeLeftGameOverDelay;
+    public float timeLeftLiveLost;
 
     // singleton: prevent instantiation from other classes
     private ValueManager() { }
@@ -22,7 +23,8 @@ public class ValueManager {
         livesVisual = lives;
         score = 0;
         scoreVisual = score;
-        timeLeftGameOverDelay = 0;
+        timeLeftGameOverDelay = Constants.TIME_DELAY_GAME_OVER;
+        timeLeftLiveLost = 0;
     }
 
     public boolean isGameOver () {

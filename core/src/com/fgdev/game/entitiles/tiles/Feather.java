@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
 import com.fgdev.game.entitiles.Player;
+import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.utils.BodyFactory;
@@ -14,16 +15,16 @@ import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.*;
 
-public class Feather extends TileObject {
+public class Feather extends ItemObject {
 
     private static String TAG = Feather.class.getName();
 
     private TextureRegion feather;
 
-    public Feather(World world, MapObject object) {
-        super(world, object);
+    public Feather(World world, MapObject object, ScoreIndicator scoreIndicator) {
+        super(world, object, scoreIndicator);
         feather = Assets.instance.feather.feather;
-        setBounds(getX(), getY(), 46 * 2 / PPM, 40 * 2/ PPM);
+        setBounds(getX(), getY(), 40 * 2 / PPM, 40 * 2/ PPM);
         destroyed = false;
     }
 
@@ -32,8 +33,8 @@ public class Feather extends TileObject {
         Rectangle rect = ((RectangleMapObject) object).getRectangle();
         body = bodyFactory.makeBoxPolyBody((rect.x + rect.width / 2) / PPM,
                 (rect.y + rect.height / 2) / PPM,
-                rect.getWidth() / 2 / PPM,
-                rect.getHeight() / 2 / PPM,
+                40 / PPM,
+                40 / PPM,
                 BodyFactory.FEATHER,
                 BodyDef.BodyType.StaticBody,
                 this
@@ -48,9 +49,9 @@ public class Feather extends TileObject {
     }
 
     @Override
-    public void onHit(Player player) {
-        Gdx.app.log(TAG, "Collision");
+    public void collected(Player player) {
         ValueManager.instance.score += score();
+        scoreIndicator.addScoreItem(getX(), getY(), score());
         AudioManager.instance.play(Assets.instance.sounds.pickupFeather);
         player.setFeatherPowerup(true);
         destroy();
@@ -58,6 +59,6 @@ public class Feather extends TileObject {
 
     @Override
     public int score() {
-        return 150;
+        return 100;
     }
 }

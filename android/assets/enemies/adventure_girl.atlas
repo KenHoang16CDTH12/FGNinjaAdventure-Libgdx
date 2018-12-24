@@ -1,0 +1,377 @@
+
+adventure_girl.png
+size: 2048,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+anim_dead
+  rotate: false
+  xy: 2, 158
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 1
+anim_dead
+  rotate: false
+  xy: 2, 65
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 2
+anim_dead
+  rotate: false
+  xy: 95, 158
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 3
+anim_dead
+  rotate: false
+  xy: 95, 65
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 4
+anim_dead
+  rotate: false
+  xy: 188, 158
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 5
+anim_dead
+  rotate: false
+  xy: 188, 65
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 6
+anim_dead
+  rotate: false
+  xy: 281, 158
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 7
+anim_dead
+  rotate: false
+  xy: 281, 158
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 8
+anim_dead
+  rotate: false
+  xy: 281, 158
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 9
+anim_dead
+  rotate: false
+  xy: 281, 158
+  size: 91, 91
+  orig: 91, 91
+  offset: 0, 0
+  index: 10
+anim_idle
+  rotate: false
+  xy: 374, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 1
+anim_idle
+  rotate: false
+  xy: 472, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 2
+anim_idle
+  rotate: false
+  xy: 472, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 10
+anim_idle
+  rotate: false
+  xy: 570, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 3
+anim_idle
+  rotate: false
+  xy: 570, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 9
+anim_idle
+  rotate: false
+  xy: 668, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 4
+anim_idle
+  rotate: false
+  xy: 668, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 8
+anim_idle
+  rotate: false
+  xy: 766, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 5
+anim_idle
+  rotate: false
+  xy: 766, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 7
+anim_idle
+  rotate: false
+  xy: 864, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 6
+anim_jump
+  rotate: false
+  xy: 962, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 1
+anim_jump
+  rotate: false
+  xy: 1060, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 2
+anim_jump
+  rotate: false
+  xy: 1158, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 3
+anim_jump
+  rotate: false
+  xy: 1256, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 4
+anim_jump
+  rotate: false
+  xy: 1354, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 5
+anim_jump
+  rotate: false
+  xy: 1452, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 6
+anim_jump
+  rotate: false
+  xy: 1550, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 7
+anim_jump
+  rotate: false
+  xy: 1648, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 8
+anim_jump
+  rotate: false
+  xy: 1746, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 9
+anim_jump
+  rotate: false
+  xy: 1844, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 10
+anim_melee
+  rotate: false
+  xy: 1942, 168
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 1
+anim_melee
+  rotate: false
+  xy: 281, 75
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 2
+anim_melee
+  rotate: false
+  xy: 379, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 3
+anim_melee
+  rotate: false
+  xy: 477, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 4
+anim_melee
+  rotate: false
+  xy: 575, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 5
+anim_melee
+  rotate: false
+  xy: 673, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 6
+anim_melee
+  rotate: false
+  xy: 771, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 7
+anim_run
+  rotate: false
+  xy: 869, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 1
+anim_run
+  rotate: false
+  xy: 967, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 2
+anim_run
+  rotate: false
+  xy: 1065, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 3
+anim_run
+  rotate: false
+  xy: 1163, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 4
+anim_run
+  rotate: false
+  xy: 1261, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 5
+anim_run
+  rotate: false
+  xy: 1359, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 6
+anim_run
+  rotate: false
+  xy: 1457, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 7
+anim_run
+  rotate: false
+  xy: 1555, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 8
+anim_shoot
+  rotate: false
+  xy: 1653, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 1
+anim_shoot
+  rotate: false
+  xy: 1751, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 2
+anim_shoot
+  rotate: false
+  xy: 1849, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 3
+anim_slide
+  rotate: false
+  xy: 1947, 85
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 1
+anim_slide
+  rotate: false
+  xy: 379, 2
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 2
+anim_slide
+  rotate: false
+  xy: 379, 2
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 5
+anim_slide
+  rotate: false
+  xy: 477, 2
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 3
+anim_slide
+  rotate: false
+  xy: 477, 2
+  size: 96, 81
+  orig: 96, 81
+  offset: 0, 0
+  index: 4

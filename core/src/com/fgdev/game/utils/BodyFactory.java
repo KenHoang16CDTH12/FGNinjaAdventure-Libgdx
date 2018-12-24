@@ -15,10 +15,13 @@ public class BodyFactory {
     public static final int CRATE = 5;
     public static final int FEATHER = 6;
     public static final int PLAYER = 7;
-    public static final int PLAYER_FOOT = 8;
+    public static final int PLAYER_SENSOR = 8;
     public static final int PLAYER_ATTACK = 9;
     public static final int ZOMBIE = 10;
-    public static final int ZOMBIE_FOOT = 11;
+    public static final int ZOMBIE_SENSOR = 11;
+    public static final int HIDDEN_WALL = 12;
+    public static final int ROBOT = 13;
+    public static final int ROBOT_SENSOR = 14;
 
     private final float DEGTORAD = 0.0174533f;
 
@@ -45,16 +48,12 @@ public class BodyFactory {
         switch(material){
             case GROUND:
                 fixtureDef.filter.categoryBits = GROUND_BIT;
-                fixtureDef.filter.maskBits = PLAYER_BIT | CRATE_BIT | ZOMBIE_BIT;
+                fixtureDef.filter.maskBits = PLAYER_BIT | CRATE_BIT | ZOMBIE_BIT | ROBOT_BIT;
                 break;
             case SIGN:
                 fixtureDef.filter.categoryBits = SIGN_BIT;
                 fixtureDef.filter.maskBits = PLAYER_BIT;
                 fixtureDef.isSensor = true;
-                break;
-            case KUNAI:
-                fixtureDef.filter.categoryBits = KUNAI_BIT;
-                fixtureDef.filter.maskBits = CRATE_BIT;
                 break;
             case COIN:
                 fixtureDef.filter.categoryBits = COIN_BIT;
@@ -63,7 +62,7 @@ public class BodyFactory {
                 break;
             case CRATE:
                 fixtureDef.filter.categoryBits = CRATE_BIT;
-                fixtureDef.filter.maskBits = CRATE_BIT | GROUND_BIT | ATTACK_BIT | KUNAI_BIT | PLAYER_BIT ;
+                fixtureDef.filter.maskBits = CRATE_BIT | GROUND_BIT | ATTACK_BIT | KUNAI_BIT | PLAYER_BIT | ZOMBIE_BIT | ROBOT_BIT;
                 break;
             case FEATHER:
                 fixtureDef.filter.categoryBits = FEATHER_BIT;
@@ -72,25 +71,43 @@ public class BodyFactory {
                 break;
             case PLAYER:
                 fixtureDef.filter.categoryBits = PLAYER_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
+                fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT | ZOMBIE_BIT | ROBOT_BIT;
                 break;
-            case PLAYER_FOOT:
+            case PLAYER_SENSOR:
                 fixtureDef.filter.categoryBits = PLAYER_BIT;
-                fixtureDef.filter.maskBits = GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT;
+                fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT | ZOMBIE_BIT | ROBOT_BIT;
                 fixtureDef.isSensor = true;
                 break;
             case PLAYER_ATTACK:
                 fixtureDef.filter.categoryBits = ATTACK_BIT;
-                fixtureDef.filter.maskBits = CRATE_BIT;
+                fixtureDef.filter.maskBits = CRATE_BIT | ZOMBIE_BIT | ROBOT_BIT;
+                fixtureDef.isSensor = true;
+                break;
+            case KUNAI:
+                fixtureDef.filter.categoryBits = KUNAI_BIT;
+                fixtureDef.filter.maskBits = CRATE_BIT | ZOMBIE_BIT | ROBOT_BIT;
                 fixtureDef.isSensor = true;
                 break;
             case ZOMBIE:
                 fixtureDef.filter.categoryBits = ZOMBIE_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT;
+                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT;
                 break;
-            case ZOMBIE_FOOT:
+            case ZOMBIE_SENSOR:
                 fixtureDef.filter.categoryBits = ZOMBIE_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT;
+                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT | ATTACK_BIT | KUNAI_BIT;
+                fixtureDef.isSensor = true;
+                break;
+            case HIDDEN_WALL:
+                fixtureDef.filter.categoryBits = HIDDEN_WALL_BIT;
+                fixtureDef.filter.maskBits = ZOMBIE_BIT;
+                break;
+            case ROBOT:
+                fixtureDef.filter.categoryBits = ROBOT_BIT;
+                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT;
+                break;
+            case ROBOT_SENSOR:
+                fixtureDef.filter.categoryBits = ROBOT_BIT;
+                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT | ATTACK_BIT | KUNAI_BIT;
                 fixtureDef.isSensor = true;
                 break;
             case NOTHING:
@@ -166,13 +183,22 @@ public class BodyFactory {
         return boxBody;
     }
 
-    public void makeObjectSensor(Body body, float hx, float hy, Vector2 center, float angel, int material, Object object) {
+    public void makeShapeSensor(Body body, float hx, float hy, Vector2 center, float angel, int material, Object object) {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(hx, hy, center, angel);
         FixtureDef fixtureDef = makeFixture(material, shape);
         body.createFixture(fixtureDef).setUserData(object);
         shape.dispose();
     }
+
+    public void makeEdgeSensor(Body body, Vector2 vector1, Vector2 vector2, int material, Object object) {
+        EdgeShape edgeShape = new EdgeShape();
+        edgeShape.set(vector1, vector2);
+        FixtureDef fixtureDef = makeFixture(material, edgeShape);
+        body.createFixture(fixtureDef).setUserData(object);
+        edgeShape.dispose();
+    }
+
 
     public void makeConeSensor(Body body, float size){
         FixtureDef fixtureDef = new FixtureDef();

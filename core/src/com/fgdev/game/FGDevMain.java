@@ -3,14 +3,11 @@ package com.fgdev.game;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.Interpolation;
 import com.fgdev.game.screens.DirectedGame;
 import com.fgdev.game.screens.MenuScreen;
 import com.fgdev.game.screens.transitions.ScreenTransition;
 import com.fgdev.game.screens.transitions.ScreenTransitionFade;
-import com.fgdev.game.screens.transitions.ScreenTransitionSlice;
 import com.fgdev.game.utils.Assets;
-import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.utils.GamePreferences;
 
 public class FGDevMain extends DirectedGame {

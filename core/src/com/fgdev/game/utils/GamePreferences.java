@@ -39,7 +39,7 @@ public class GamePreferences {
         showFpsCounter = prefs.getBoolean("showFpsCounter", false);
         useMonochromeShader = prefs.getBoolean("useMonochromeShader",
                 false);
-        debug = prefs.getBoolean("debug", true);
+        debug = prefs.getBoolean("debug", false);
     }
     public void save () {
         prefs.putBoolean("sound", sound);

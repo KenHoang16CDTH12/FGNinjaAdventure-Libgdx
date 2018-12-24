@@ -3,6 +3,7 @@ package com.fgdev.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -25,9 +26,11 @@ public class GameOverOverlay implements Disposable {
 
 	private final Stage stage;
 	private final ShapeRenderer overlay;
+	private OrthographicCamera camera;
 
-	public GameOverOverlay(final Batch batch) {
-		stage = new Stage(new ScreenViewport(), batch);
+	public GameOverOverlay(final Batch batch, OrthographicCamera camera) {
+		this.camera = camera;
+		stage = new Stage(new ScreenViewport(camera), batch);
 		Label.LabelStyle style = new Label.LabelStyle();
 		style.fontColor = Color.WHITE;
 		style.font = Assets.instance.fonts.textFont;

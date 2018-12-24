@@ -5,15 +5,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.utils.GamePreferences;
-import com.fgdev.game.worlds.WorldController;
-import com.fgdev.game.worlds.WorldRenderer;
+import com.fgdev.game.logics.GameScreenLogic;
 
 public class GameScreen extends AbstractGameScreen {
 
     private static final String TAG = GameScreen.class.getName();
     
-    private WorldController worldController;
-    private WorldRenderer worldRenderer;
+    private GameScreenLogic gameScreenLogic;
     private boolean paused;
 
     public GameScreen (DirectedGame game) {
@@ -26,27 +24,26 @@ public class GameScreen extends AbstractGameScreen {
         if (!paused) {
             // Update game world by the time that has passed
             // since last rendered frame.
-            worldController.update(deltaTime);
+            gameScreenLogic.update(deltaTime);
         }
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         // Clears the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // Render game world to screen
-        worldRenderer.render();
+        gameScreenLogic.render();
     }
 
     @Override
     public void show() {
         GamePreferences.instance.load();
         AudioManager.instance.play(Assets.instance.music.background1);
-        worldController = new WorldController(game);
-        worldRenderer = new WorldRenderer(worldController);
+        gameScreenLogic = new GameScreenLogic(game);
         Gdx.input.setCatchBackKey(true);
     }
 
     @Override
     public void resize(int width, int height) {
-        worldRenderer.resize(width, height);
+        gameScreenLogic.resize(width, height);
     }
 
     @Override
@@ -64,13 +61,18 @@ public class GameScreen extends AbstractGameScreen {
 
     @Override
     public void hide() {
-        worldRenderer.dispose();
-        worldController.dispose();
+        gameScreenLogic.dispose();
         Gdx.input.setCatchBackKey(false);
     }
 
     @Override
-    public InputProcessor getInputProcessor() {
-        return worldController;
+    public void dispose() {
+        super.dispose();
     }
+
+    @Override
+    public InputProcessor getInputProcessor() {
+        return gameScreenLogic;
+    }
+
 }

@@ -72,7 +72,7 @@ public class MenuScreen extends AbstractGameScreen {
         stage.clear();
         Stack stack = new Stack();
         stage.addActor(stack);
-        stack.setSize(Constants.VIEWPORT_GUI_WIDTH, Constants.VIEWPORT_GUI_HEIGHT);
+        stack.setSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         stack.add(layerBackground);
         stack.add(layerObjects);
         stack.add(layerLogos);
@@ -101,8 +101,8 @@ public class MenuScreen extends AbstractGameScreen {
 
     @Override
     public void show() {
-        stage = new Stage(new StretchViewport(Constants.VIEWPORT_GUI_WIDTH,
-                Constants.VIEWPORT_GUI_HEIGHT));
+        stage = new Stage(new StretchViewport(Constants.WINDOW_WIDTH,
+                Constants.WINDOW_HEIGHT));
         AudioManager.instance.play(Assets.instance.music.menuBackground);
         rebuildStage();
     }
@@ -139,7 +139,7 @@ public class MenuScreen extends AbstractGameScreen {
         imgCoins.setOrigin(imgCoins.getWidth() / 2,
                 imgCoins.getHeight() / 2);
         imgCoins.addAction(sequence(
-                moveTo(135, 100),
+                moveTo(Constants.WINDOW_WIDTH / 9, Constants.WINDOW_HEIGHT / 5),
                 scaleTo(0, 0),
                 fadeOut(0),
                 delay(2.5f),
@@ -149,7 +149,7 @@ public class MenuScreen extends AbstractGameScreen {
         // + Bunny
         imgCharacter = new Image(skinFGDev, "character");
         layer.addActor(imgCharacter);
-        imgCharacter.setPosition(650, 100);
+        imgCharacter.setPosition(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 4);
         return layer;
     }
     private Table buildLogosLayer () {
@@ -209,7 +209,7 @@ public class MenuScreen extends AbstractGameScreen {
         winOptions.pack();
         // Move options window to bottom right corner
         winOptions.setPosition
-                (Constants.VIEWPORT_GUI_WIDTH - winOptions.getWidth() - 50,
+                (Constants.WINDOW_WIDTH - winOptions.getWidth() - 50,
                         50);
         return winOptions;
     }

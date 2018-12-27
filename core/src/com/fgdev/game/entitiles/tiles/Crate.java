@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
@@ -16,17 +17,28 @@ import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.*;
 
-public class Crate extends BoxObject {
+public class Crate extends BoxObject implements Pool.Poolable {
 
     private static String TAG = Feather.class.getName();
 
     private TextureRegion crate;
 
-    public Crate(World world, MapObject object, ScoreIndicator scoreIndicator) {
-        super(world, object, scoreIndicator);
+    public Crate(World world, ScoreIndicator scoreIndicator) {
+        super(world, scoreIndicator);
+    }
+
+    @Override
+    public void init(MapObject object) {
+        this.object = object;
         crate = Assets.instance.item.crate;
         setBounds(getX(), getY(), 47 * 2 / PPM, 47 * 2 / PPM);
-        destroyed = false;
+        // Extend Abstract
+        init();
+    }
+
+    @Override
+    public void reset() {
+        crate = Assets.instance.item.crate;
     }
 
     @Override

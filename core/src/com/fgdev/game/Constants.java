@@ -26,6 +26,10 @@ public class Constants {
     public static final short KUNAI_BIT = 128;
     public static final short ZOMBIE_BIT = 256;
     public static final short ROBOT_BIT = 512;
+    public static final short ADVENTURE_GIRL_BIT = 1024;
+    public static final short DINO_BIT = 2048;
+    public static final short KNIGHT_BIT = 4096;
+    public static final short SANTA_BIT = 8192;
     // Bullet
     public static final float BULLET_SPEED = 20f;
     // Location of atlas file for level
@@ -41,6 +45,7 @@ public class Constants {
     public static final String TEXTURE_ATLAS_UI = "images/ui.atlas";
     public static final String TEXTURE_ATLAS_LIBGDX_UI = "images/star-soldier-ui.atlas";
     public static final String TEXTURE_ATLAS_ITEM = "items/item.atlas";
+    public static final String TEXTURE_ATLAS_JOYSTICK = "images/joystick.atlas";
     public static final String TEXTURE_ATLAS_PLAYER_BOY = "characters/boy.atlas";
     public static final String TEXTURE_ATLAS_PLAYER_GIRL = "characters/girl.atlas";
     // Location of atlas enemies
@@ -50,7 +55,6 @@ public class Constants {
     public static final String TEXTURE_ATLAS_DINO = "enemies/dino.atlas";
     public static final String TEXTURE_ATLAS_KNIGHT = "enemies/knight.atlas";
     public static final String TEXTURE_ATLAS_SANTA = "enemies/santa.atlas";
-    public static final String TEXTURE_ATLAS_TEMPLE_RUN = "enemies/santa.atlas";
     // Location of description file for skins
     public static final String SKIN_UI = "images/ui.json";
     public static final String SKIN_LIBGDX_UI = "images/star-soldier-ui.json";

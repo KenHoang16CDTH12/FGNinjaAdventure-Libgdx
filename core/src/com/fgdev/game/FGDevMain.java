@@ -34,4 +34,10 @@ public class FGDevMain extends DirectedGame {
 		Gdx.graphics.setTitle(String.format(GAME_TITLE, Gdx.graphics.getFramesPerSecond()));
 		super.render();
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		Assets.instance.dispose();
+	}
 }

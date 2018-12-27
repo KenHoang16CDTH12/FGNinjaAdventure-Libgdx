@@ -5,14 +5,25 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.utils.BodyFactory;
 
 import static com.fgdev.game.Constants.PPM;
 
-public class HiddenWall extends PlatformObject {
+public class HiddenWall extends PlatformObject implements Pool.Poolable {
 
-    public HiddenWall(World world, MapObject object) {
-        super(world, object);
+    public HiddenWall(World world) {
+        super(world);
+    }
+
+    @Override
+    public void init(MapObject mapObject) {
+        this.object = mapObject;
+        init();
+    }
+
+    @Override
+    public void reset() {
     }
 
     @Override

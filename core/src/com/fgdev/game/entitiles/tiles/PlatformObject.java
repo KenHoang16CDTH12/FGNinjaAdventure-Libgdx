@@ -11,12 +11,16 @@ public abstract class PlatformObject {
     protected BodyFactory bodyFactory;
     protected MapObject object;
 
-    public PlatformObject(World world, MapObject object) {
+    public PlatformObject(World world) {
         this.world = world;
-        this.object = object;
         bodyFactory = BodyFactory.getInstance(world);
+    }
+
+    protected void init() {
         definePlatform();
     }
+
+    public abstract void init(MapObject mapObject);
 
     protected abstract void definePlatform();
 

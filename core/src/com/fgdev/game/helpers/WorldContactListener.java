@@ -33,11 +33,6 @@ public class WorldContactListener implements ContactListener {
                     ((Player) fixA.getUserData()).setOnGround(true);
                 break;
             case  PLAYER_BIT | COIN_BIT:
-                if (fixA.getFilterData().categoryBits == PLAYER_BIT)
-                    ((ItemObject) fixB.getUserData()).collected((Player) fixA.getUserData());
-                else if ((fixB.getFilterData().categoryBits == PLAYER_BIT))
-                    ((ItemObject) fixA.getUserData()).collected((Player) fixB.getUserData());
-                break;
             case  PLAYER_BIT | FEATHER_BIT:
                 if (fixA.getFilterData().categoryBits == PLAYER_BIT)
                     ((ItemObject) fixB.getUserData()).collected((Player) fixA.getUserData());
@@ -61,35 +56,29 @@ public class WorldContactListener implements ContactListener {
                     ((Kunai) fixA.getUserData()).setToDestroy();
                 break;
             case  ATTACK_BIT | ZOMBIE_BIT:
-                if (fixA.getFilterData().categoryBits == ATTACK_BIT)
-                    ((Enemy) fixB.getUserData()).killed();
-                else if ((fixB.getFilterData().categoryBits == ATTACK_BIT))
-                    ((Enemy) fixA.getUserData()).killed();
-                break;
             case  ATTACK_BIT | ROBOT_BIT:
+            case  ATTACK_BIT | ADVENTURE_GIRL_BIT:
+            case  ATTACK_BIT | DINO_BIT:
+            case  ATTACK_BIT | KNIGHT_BIT:
+            case  ATTACK_BIT | SANTA_BIT:
                 if (fixA.getFilterData().categoryBits == ATTACK_BIT)
                     ((Enemy) fixB.getUserData()).killed();
                 else if ((fixB.getFilterData().categoryBits == ATTACK_BIT))
                     ((Enemy) fixA.getUserData()).killed();
                 break;
             case  KUNAI_BIT | ZOMBIE_BIT:
-                if (fixA.getFilterData().categoryBits == KUNAI_BIT)
-                    ((Enemy) fixB.getUserData()).killed();
-                else if ((fixB.getFilterData().categoryBits == KUNAI_BIT))
-                    ((Enemy) fixA.getUserData()).killed();
-                if (fixA.getFilterData().categoryBits == ZOMBIE_BIT)
-                    ((Kunai) fixB.getUserData()).setToDestroy();
-                else if (fixB.getFilterData().categoryBits == ZOMBIE_BIT)
-                    ((Kunai) fixA.getUserData()).setToDestroy();
-                break;
             case  KUNAI_BIT | ROBOT_BIT:
+            case  KUNAI_BIT | ADVENTURE_GIRL_BIT:
+            case  KUNAI_BIT | DINO_BIT:
+            case  KUNAI_BIT | KNIGHT_BIT:
+            case  KUNAI_BIT | SANTA_BIT:
                 if (fixA.getFilterData().categoryBits == KUNAI_BIT)
                     ((Enemy) fixB.getUserData()).killed();
                 else if ((fixB.getFilterData().categoryBits == KUNAI_BIT))
                     ((Enemy) fixA.getUserData()).killed();
-                if (fixA.getFilterData().categoryBits == ROBOT_BIT)
+                if (fixA.getFilterData().categoryBits != KUNAI_BIT)
                     ((Kunai) fixB.getUserData()).setToDestroy();
-                else if (fixB.getFilterData().categoryBits == ROBOT_BIT)
+                else if (fixB.getFilterData().categoryBits != KUNAI_BIT)
                     ((Kunai) fixA.getUserData()).setToDestroy();
                 break;
             case  PLAYER_BIT | ZOMBIE_BIT:

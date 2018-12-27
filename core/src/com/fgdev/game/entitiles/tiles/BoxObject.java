@@ -18,17 +18,21 @@ public abstract class BoxObject extends Sprite {
     protected boolean destroyed;
     protected ScoreIndicator scoreIndicator;
 
-    public BoxObject(World world, MapObject object, ScoreIndicator scoreIndicator) {
+    public BoxObject(World world, ScoreIndicator scoreIndicator) {
         this.world = world;
-        this.object = object;
         this.scoreIndicator = scoreIndicator;
         bodyFactory = BodyFactory.getInstance(world);
+    }
+
+    public void init() {
         defineObject();
         toDestroy = false;
         destroyed = false;
         setPosition(body.getPosition().x, body.getPosition().y);
         body.setActive(false);
     }
+
+    protected abstract void init(MapObject object);
 
     public void destroy() {
         toDestroy = true;
@@ -55,5 +59,9 @@ public abstract class BoxObject extends Sprite {
 
     public Body getBody() {
         return body;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
     }
 }

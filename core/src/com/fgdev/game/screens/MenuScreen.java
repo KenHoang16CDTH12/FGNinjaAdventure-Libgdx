@@ -243,8 +243,6 @@ public class MenuScreen extends AbstractGameScreen {
     private void onSaveClicked() {
         saveSettings();
         onCancelClicked();
-        // Load assets
-        Assets.instance.init(new AssetManager());
         AudioManager.instance.onSettingsUpdated();
     }
     private void onCancelClicked() {

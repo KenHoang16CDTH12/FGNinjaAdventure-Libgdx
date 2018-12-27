@@ -6,9 +6,9 @@ public class TexturePackerApp {
 
     private static boolean rebuildAtlas = true;
     private static boolean drawDebugOutline = false;
-    private static String input = "desktop/assets-raw/enemies/templerun";
+    private static String input = "desktop/assets-raw/joysticks";
     private static String output = "android/assets/packers";
-    private static String packFileName = "templerun";
+    private static String packFileName = "joystick";
     // Commandline => convert -resize 20% BoyIdle10.png anim_boy_iddle_10.png
     public static void main(final String[] args) {
         if (rebuildAtlas) {

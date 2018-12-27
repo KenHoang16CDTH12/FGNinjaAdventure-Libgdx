@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
@@ -16,7 +17,7 @@ import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.PPM;
 
-public class Robot  extends Enemy {
+public class Robot extends Enemy implements Pool.Poolable {
 
     public static final String TAG = Robot.class.getName();
 
@@ -53,8 +54,23 @@ public class Robot  extends Enemy {
 
     private float timeDelayDie = 3;
 
-    public Robot(World world, MapObject mapObject, ScoreIndicator scoreIndicator, int type) {
-        super(world, mapObject, type, scoreIndicator);
+    public Robot(World world, ScoreIndicator scoreIndicator) {
+        super(world, scoreIndicator);
+        robotIdle = Assets.instance.robot.animIdle;
+        robotRun = Assets.instance.robot.animRun;
+        robotDead = Assets.instance.robot.animDead;
+        robotShoot = Assets.instance.robot.animShoot;
+        robotJumpShoot = Assets.instance.robot.animJumpShoot;
+        robotJumpMelee = Assets.instance.robot.animJumpMelee;
+        robotMelee = Assets.instance.robot.animMelee;
+        robotRunShoot = Assets.instance.robot.animRunShoot;
+        robotSlide = Assets.instance.robot.animSlide;
+        robotJump = Assets.instance.robot.animJump;
+    }
+
+    public void init(MapObject mapObject, int type) {
+        this.mapObject = mapObject;
+        this.type = type;
         currentState = State.IDLE;
         previousState = State.IDLE;
         isRun = true;
@@ -62,22 +78,15 @@ public class Robot  extends Enemy {
         isShoot = false;
         isMelee = false;
         isSlide = false;
-        speed = 0.5f;
-
-        robotIdle = Assets.instance.robot.animIdle;
-        robotRun = Assets.instance.robot.animRun;
-        robotDead = Assets.instance.robot.animDead;
-        robotShoot = Assets.instance.robot.animShoot;
-        robotJumpShoot = Assets.instance.robot.animJumpShoot;
-        robotJumpMelee = Assets.instance.robot.animJumpMelee;
-        robotMelee = Assets.instance.robot.animJumpMelee;
-        robotRunShoot = Assets.instance.robot.animRunShoot;
-        robotSlide = Assets.instance.robot.animSlide;
-        robotJump = Assets.instance.robot.animJump;
-
+        speed = 1f;
+        // Extend Abstract
+        init();
         setRegion((TextureRegion) robotIdle.getKeyFrame(stateTimer));
     }
 
+    @Override
+    public void reset() {
+    }
 
     public void update(float dt) {
         if (destroyed) {

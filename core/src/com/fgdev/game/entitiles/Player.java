@@ -1,6 +1,5 @@
 package com.fgdev.game.entitiles;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -8,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.entitiles.bullets.Kunai;
 import com.fgdev.game.utils.*;
 import com.fgdev.game.Constants;
@@ -61,7 +61,16 @@ public class Player extends Sprite {
     private final float JUMP_TIME_MAX = 0.3f;
 
     // Shoot
-    private Array<Kunai> kunaies;
+    // array containing the active kunaies.
+    private final Array<Kunai> activeKunaies = new Array<Kunai>();
+
+    // kunaies pool.
+    private final Pool<Kunai> kunaiPool = new Pool<Kunai>() {
+        @Override
+        protected Kunai newObject() {
+            return new Kunai(getWorld());
+        }
+    };
 
     private boolean isOnGround;
 
@@ -85,34 +94,33 @@ public class Player extends Sprite {
         // Power-ups
         hasFeatherPowerup = false;
         timeLeftFeatherPowerup = 0;
+        Assets.AssetPlayer player = GamePreferences.instance.isGirl ? Assets.instance.playerGirl : Assets.instance.playerBoy;
         // Iddle
-        playerIddle = Assets.instance.player.animIddle;
+        playerIddle = player.animIdle;
         // Delay
-        playerDelay = Assets.instance.player.animIddle;
+        playerDelay = player.animIdle;
         // Run
-        playerRun = Assets.instance.player.animRun;
+        playerRun = player.animRun;
         // Jump
-        playerJump = Assets.instance.player.animJump;
+        playerJump = player.animJump;
         // Climb
-        playerClimb = Assets.instance.player.animClimb;
+        playerClimb = player.animClimb;
         // Dead
-        playerDead = Assets.instance.player.animDead;
+        playerDead = player.animDead;
         // Glide
-        playerGlide = Assets.instance.player.animGlide;
+        playerGlide = player.animGlide;
         // JumpAttack
-        playerJumpAttack = Assets.instance.player.animJumpAttack;
+        playerJumpAttack = player.animJumpAttack;
         // JumpThrow
-        playerJumpThrow = Assets.instance.player.animJumpThrow;
+        playerJumpThrow = player.animJumpThrow;
         // Attack
-        playerAttack = Assets.instance.player.animAttack;
+        playerAttack = player.animAttack;
         // Slide
-        playerSlide = Assets.instance.player.animSlide;
+        playerSlide = player.animSlide;
         // Throw
-        playerThrow = Assets.instance.player.animThrow;
+        playerThrow = player.animThrow;
         definePlayer();
         setRegion((TextureRegion) playerIddle.getKeyFrame(stateTimer));
-        // kunai
-        kunaies = new Array<Kunai>();
     }
 
     public void update(float dt) {
@@ -125,10 +133,15 @@ public class Player extends Sprite {
             definePlayerAttackLeft();
         if (timeToRedefinePlayer)
             reDefinePlayer();
-        for (Kunai kunai: kunaies) {
-            kunai.update(dt);
-            if (kunai.isDestroyed())
-                kunaies.removeValue(kunai, true);
+        Kunai item;
+        int len = activeKunaies.size;
+        for (int i = len; --i >= 0;) {
+            item = activeKunaies.get(i);
+            item.update(dt);
+            if (!item.isAlive()) {
+                activeKunaies.removeIndex(i);
+                kunaiPool.free(item);
+            }
         }
     }
 
@@ -213,8 +226,12 @@ public class Player extends Sprite {
             case JUMP_THROW:
                 region = (TextureRegion) playerJumpThrow.getKeyFrame(stateTimer);
                 if (playerJumpThrow.isAnimationFinished(stateTimer)) {
-                    if (!canThrow && !world.isLocked())
-                        kunaies.add(new Kunai(this, body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false));
+                    if (!canThrow && !world.isLocked()) {
+                        // if you want to spawn a new bullet:
+                        Kunai item = kunaiPool.obtain();
+                        item.init( body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false);
+                        activeKunaies.add(item);
+                    }
                     canThrow = true;
                 }
                 break;
@@ -370,7 +387,10 @@ public class Player extends Sprite {
     public void attackThrow() {
         if (currentState != State.JUMP_THROW && currentState != State.JUMP && currentState != State.GLIDE && currentState != State.ATTACK && canThrow && !world.isLocked()) {
             setRegion((TextureRegion) playerThrow.getKeyFrame(stateTimer));
-            kunaies.add(new Kunai(this, body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false));
+            // if you want to spawn a new bullet:
+            Kunai item = kunaiPool.obtain();
+            item.init( body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false);
+            activeKunaies.add(item);
             isThrow = true;
             canThrow = false;
         }
@@ -487,8 +507,14 @@ public class Player extends Sprite {
     @Override
     public void draw(Batch batch) {
         super.draw(batch);
-        for(Kunai kunai : kunaies)
-            kunai.draw(batch);
+        Kunai item;
+        int len = activeKunaies.size;
+        for (int i = len; --i >= 0;) {
+            item = activeKunaies.get(i);
+            if (item.isAlive()) {
+                item.draw(batch);
+            }
+        }
     }
 
     public void setOnGround(boolean onGround) {
@@ -510,4 +536,5 @@ public class Player extends Sprite {
     public boolean isDead() {
         return isDead;
     }
+
 }

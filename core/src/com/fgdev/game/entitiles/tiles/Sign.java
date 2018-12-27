@@ -5,16 +5,27 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.BodyFactory;
 
 import static com.fgdev.game.Constants.PPM;
 
-public class Sign extends PlatformObject {
+public class Sign extends PlatformObject implements Pool.Poolable {
 
-    public Sign(World world, MapObject object) {
-        super(world, object);
+    public Sign(World world) {
+        super(world);
+    }
+
+    @Override
+    public void init(MapObject mapObject) {
+        this.object = mapObject;
+        init();
+    }
+
+    @Override
+    public void reset() {
     }
 
     @Override

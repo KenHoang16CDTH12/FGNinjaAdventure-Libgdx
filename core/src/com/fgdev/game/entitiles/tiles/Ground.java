@@ -5,14 +5,25 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.utils.BodyFactory;
 
 import static com.fgdev.game.Constants.PPM;
 
-public class Ground extends PlatformObject {
+public class Ground extends PlatformObject implements Pool.Poolable {
 
-    public Ground(World world, MapObject object) {
-        super(world, object);
+    public Ground(World world) {
+        super(world);
+    }
+
+    @Override
+    public void init(MapObject mapObject) {
+        this.object = mapObject;
+        init();
+    }
+
+    @Override
+    public void reset() {
     }
 
     @Override

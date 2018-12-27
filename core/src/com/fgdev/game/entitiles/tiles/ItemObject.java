@@ -18,18 +18,25 @@ public abstract class ItemObject extends Sprite {
     protected boolean toDestroy;
     protected boolean destroyed;
     protected ScoreIndicator scoreIndicator;
+    protected float stateTimer;
 
-    public ItemObject(World world, MapObject object, ScoreIndicator scoreIndicator) {
+
+    public ItemObject(World world, ScoreIndicator scoreIndicator) {
         this.world = world;
-        this.object = object;
         this.scoreIndicator = scoreIndicator;
         bodyFactory = BodyFactory.getInstance(world);
+    }
+
+    protected void init() {
         defineObject();
+        stateTimer = 0;
         toDestroy = false;
         destroyed = false;
         setPosition(body.getPosition().x, body.getPosition().y);
         body.setActive(false);
     }
+
+    public abstract void init(MapObject object);
 
     public void destroy() {
         toDestroy = true;
@@ -58,4 +65,7 @@ public abstract class ItemObject extends Sprite {
         return body;
     }
 
+    public boolean isDestroyed() {
+        return destroyed;
+    }
 }

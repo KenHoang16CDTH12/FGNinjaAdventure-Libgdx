@@ -12,14 +12,14 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.fgdev.game.Constants;
 import com.fgdev.game.entitiles.Player;
-import com.fgdev.game.entitiles.enemies.Robot;
-import com.fgdev.game.entitiles.enemies.Zombie;
+import com.fgdev.game.entitiles.enemies.*;
 import com.fgdev.game.entitiles.tiles.Coin;
 import com.fgdev.game.entitiles.tiles.Crate;
 import com.fgdev.game.entitiles.tiles.Feather;
@@ -28,6 +28,7 @@ import com.fgdev.game.helpers.BackgroundTiledMapRenderer;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.screens.DirectedGame;
 import com.fgdev.game.screens.GameOverOverlay;
+import com.fgdev.game.screens.JoystickOverlay;
 import com.fgdev.game.screens.MenuScreen;
 import com.fgdev.game.screens.transitions.ScreenTransition;
 import com.fgdev.game.screens.transitions.ScreenTransitionFade;
@@ -70,6 +71,7 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
     private ScoreIndicator scoreIndicator;
     // HelperScreen
     private GameOverOverlay gameOverOverlay;
+    private JoystickOverlay joystickOverlay;
     // Turn on / off debug
     private boolean isDebug;
     // Limit
@@ -130,7 +132,8 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
         b2dr = new Box2DDebugRenderer();
 
         // decoration
-        clouds = new Clouds(V_WIDTH * 1000);
+        clouds = new Clouds(V_WIDTH * 100);
+        // clouds = new Clouds(10);
         clouds.getPosition().set(0, 2);
 
     }
@@ -152,6 +155,8 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
         }
         // Game over overlay
         gameOverOverlay = new GameOverOverlay(batch, cameraGUI);
+        // Joysticks
+        joystickOverlay = new JoystickOverlay(batch, cameraGUI);
         // Init score indicator
         scoreIndicator = new ScoreIndicator(this, batch);
         creator = new B2WorldCreator(world, map, scoreIndicator);
@@ -204,83 +209,233 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
 
     private void updateTile(float deltaTime) {
         // Update crates
-        for(Crate crate: creator.getCrates()) {
+        Crate crate;
+        int len = creator.getActiveCrates().size;
+        for (int i = len; --i >= 0;) {
+            crate = creator.getActiveCrates().get(i);
             crate.update(deltaTime);
             if (player.getX() + V_WIDTH / 2 + 4 > crate.getX())
                 crate.getBody().setActive(true);
+            if (crate.isDestroyed()) {
+                creator.getActiveCrates().removeIndex(i);
+                creator.getCratePool().free(crate);
+            }
         }
         // Update coins
-        for(Coin coin: creator.getCoins()) {
+        Coin coin;
+        len = creator.getActiveCoins().size;
+        for (int i = len; --i >= 0;) {
+            coin = creator.getActiveCoins().get(i);
             coin.update(deltaTime);
             if (player.getX() + V_WIDTH / 2 + 4 > coin.getX())
                 coin.getBody().setActive(true);
+            if (coin.isDestroyed()) {
+                creator.getActiveCoins().removeIndex(i);
+                creator.getCoinPool().free(coin);
+            }
         }
         // Update feathers
-        for(Feather feather: creator.getFeathers()) {
+        Feather feather;
+        len = creator.getActiveFeathers().size;
+        for (int i = len; --i >= 0;) {
+            feather = creator.getActiveFeathers().get(i);
             feather.update(deltaTime);
             if (player.getX() + V_WIDTH / 2 + 4 > feather.getX())
                 feather.getBody().setActive(true);
+            if (feather.isDestroyed()) {
+                creator.getActiveFeathers().removeIndex(i);
+                creator.getFeatherPool().free(feather);
+            }
         }
         // Update zombies
-        for(Zombie zombie: creator.getZombies()) {
+        Zombie zombie;
+        len = creator.getActiveZombies().size;
+        for (int i = len; --i >= 0;) {
+            zombie = creator.getActiveZombies().get(i);
             zombie.update(deltaTime);
             if (player.getX() + V_WIDTH / 2 + 4 > zombie.getX())
                 zombie.getBody().setActive(true);
+            if (zombie.isDestroyed()) {
+                creator.getActiveZombies().removeIndex(i);
+                creator.getZombiePool().free(zombie);
+            }
         }
         // Update robots
-        for(Robot robot: creator.getRobots()) {
+        Robot robot;
+        len = creator.getActiveRobots().size;
+        for (int i = len; --i >= 0;) {
+            robot = creator.getActiveRobots().get(i);
             robot.update(deltaTime);
             if (player.getX() + V_WIDTH / 2 + 4 > robot.getX())
                 robot.getBody().setActive(true);
+            if (robot.isDestroyed()) {
+                creator.getActiveRobots().removeIndex(i);
+                creator.getRobotPool().free(robot);
+            }
+        }
+        // Update adventures
+        AdventureGirl adventureGirl;
+        len = creator.getActiveAdventureGirls().size;
+        for (int i = len; --i >= 0;) {
+            adventureGirl = creator.getActiveAdventureGirls().get(i);
+            adventureGirl.update(deltaTime);
+            if (player.getX() + V_WIDTH / 2 + 4 > adventureGirl.getX())
+                adventureGirl.getBody().setActive(true);
+            if (adventureGirl.isDestroyed()) {
+                creator.getActiveAdventureGirls().removeIndex(i);
+                creator.getAdventureGirlPool().free(adventureGirl);
+            }
+        }
+        // Update dinos
+        Dino dino;
+        len = creator.getActiveDinos().size;
+        for (int i = len; --i >= 0;) {
+            dino = creator.getActiveDinos().get(i);
+            dino.update(deltaTime);
+            if (player.getX() + V_WIDTH / 2 + 4 > dino.getX())
+                dino.getBody().setActive(true);
+            if (dino.isDestroyed()) {
+                creator.getActiveDinos().removeIndex(i);
+                creator.getDinoPool().free(dino);
+            }
+        }
+        // Update knights
+        Knight knight;
+        len = creator.getActiveKnights().size;
+        for (int i = len; --i >= 0;) {
+            knight = creator.getActiveKnights().get(i);
+            knight.update(deltaTime);
+            if (player.getX() + V_WIDTH / 2 + 4 > knight.getX())
+                knight.getBody().setActive(true);
+            if (knight.isDestroyed()) {
+                creator.getActiveKnights().removeIndex(i);
+                creator.getKnightPool().free(knight);
+            }
+        }
+        // Update santas
+        Santa santa;
+        len = creator.getActiveSantas().size;
+        for (int i = len; --i >= 0;) {
+            santa = creator.getActiveSantas().get(i);
+            santa.update(deltaTime);
+            if (player.getX() + V_WIDTH / 2 + 4 > santa.getX())
+                santa.getBody().setActive(true);
+            if (santa.isDestroyed()) {
+                creator.getActiveSantas().removeIndex(i);
+                creator.getSantaPool().free(santa);
+            }
         }
     }
 
     public void render() {
         renderWorld(batch);
+        batch.begin();
         renderTile(batch);
         renderObject(batch);
-        renderGui(batch);
         renderShader(batch);
+        batch.end();
+        batch.setProjectionMatrix(cameraGUI.combined);
+        batch.begin();
+        renderGui(batch);
+        batch.end();
         if (isDebug) renderDebug();
     }
 
     private void renderShader(SpriteBatch batch) {
-        batch.begin();
         if (GamePreferences.instance.useMonochromeShader) {
             batch.setShader(shaderMonochrome);
             shaderMonochrome.setUniformf("u_amount", 1.0f);
         }
         batch.setShader(null);
-        batch.end();
     }
 
     private void renderTile(SpriteBatch batch) {
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
         // Coins
-        for (Coin coin: creator.getCoins())
-            coin.draw(batch);
+        Coin coin;
+        int len = creator.getActiveCoins().size;
+        for (int i = len; --i >= 0;) {
+            coin = creator.getActiveCoins().get(i);
+            if (!coin.isDestroyed()) {
+                coin.draw(batch);
+            }
+        }
         // Feathers
-        for (Feather feather: creator.getFeathers())
-            feather.draw(batch);
+        Feather feather;
+        len = creator.getActiveFeathers().size;
+        for (int i = len; --i >= 0;) {
+            feather = creator.getActiveFeathers().get(i);
+            if (!feather.isDestroyed()) {
+                feather.draw(batch);
+            }
+        }
         // Crates
-        for (Crate crate: creator.getCrates())
-            crate.draw(batch);
+        Crate crate;
+        len = creator.getActiveCrates().size;
+        for (int i = len; --i >= 0;) {
+            crate = creator.getActiveCrates().get(i);
+            if (!crate.isDestroyed()) {
+                crate.draw(batch);
+            }
+        }
         // Zombies
-        for (Zombie zombie: creator.getZombies())
-            zombie.draw(batch);
+        Zombie zombie;
+        len = creator.getActiveZombies().size;
+        for (int i = len; --i >= 0;) {
+            zombie = creator.getActiveZombies().get(i);
+            if (!zombie.isDestroyed()) {
+                zombie.draw(batch);
+            }
+        }
         // Robots
-        for (Robot robot: creator.getRobots())
-            robot.draw(batch);
-        batch.end();
+        Robot robot;
+        len = creator.getActiveRobots().size;
+        for (int i = len; --i >= 0;) {
+            robot = creator.getActiveRobots().get(i);
+            if (!robot.isDestroyed()) {
+                robot.draw(batch);
+            }
+        }
+        // Adventure Girls
+        AdventureGirl adventureGirl;
+        len = creator.getActiveAdventureGirls().size;
+        for (int i = len; --i >= 0;) {
+            adventureGirl = creator.getActiveAdventureGirls().get(i);
+            if (!adventureGirl.isDestroyed()) {
+                adventureGirl.draw(batch);
+            }
+        }
+        // Dinos
+        Dino dino;
+        len = creator.getActiveDinos().size;
+        for (int i = len; --i >= 0;) {
+            dino = creator.getActiveDinos().get(i);
+            if (!dino.isDestroyed()) {
+                dino.draw(batch);
+            }
+        }
+        // Knights
+        Knight knight;
+        len = creator.getActiveKnights().size;
+        for (int i = len; --i >= 0;) {
+            knight = creator.getActiveKnights().get(i);
+            if (!knight.isDestroyed()) {
+                knight.draw(batch);
+            }
+        }
+        // Santas
+        Santa santa;
+        len = creator.getActiveSantas().size;
+        for (int i = len; --i >= 0;) {
+            santa = creator.getActiveSantas().get(i);
+            if (!santa.isDestroyed()) {
+                santa.draw(batch);
+            }
+        }
     }
 
     private void renderObject(SpriteBatch batch) {
-        batch.setProjectionMatrix(camera.combined);
-        batch.begin();
         player.draw(batch);
         clouds.render(batch);
-        batch.end();
     }
 
     private void renderWorld (SpriteBatch batch) {
@@ -306,8 +461,6 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
     }
 
     private void renderGui (SpriteBatch batch) {
-        batch.setProjectionMatrix(cameraGUI.combined);
-        batch.begin();
         // draw collected gold coins icon + text
         // (anchored to top left edge)
         renderGuiScore(batch);
@@ -317,12 +470,11 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
         if (GamePreferences.instance.showFpsCounter)
             renderGuiFpsCounter(batch);
         // draw Game Over
-        renderGuiGameOverMessage(batch);
+        renderGuiOverlay(batch);
         // draw collected feather icon (anchored to top left edge)
         renderGuiFeatherPowerup(batch);
         // draw ScoreIndicator
         scoreIndicator.draw();
-        batch.end();
     }
 
     private void renderDebug() {
@@ -365,7 +517,7 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
         for (int i = 0; i < Constants.LIVES_START; i++) {
             if (ValueManager.instance.lives <= i)
                 batch.setColor(0.5f, 0.5f, 0.5f, 0.5f);
-            batch.draw(Assets.instance.player.head,
+            batch.draw(GamePreferences.instance.isGirl ? Assets.instance.playerGirl.head : Assets.instance.playerBoy.head,
                     x + i * 50, y, 50, 50, 120, 120, 0.35f, -0.35f, 0);
             batch.setColor(1, 1, 1, 1);
         }
@@ -378,7 +530,7 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
                     - ValueManager.instance.livesVisual) * 2;
             float alphaRotate = -45 * alphaColor;
             batch.setColor(1.0f, 0.7f, 0.7f, alphaColor);
-            batch.draw(Assets.instance.player.head,
+            batch.draw(GamePreferences.instance.isGirl ? Assets.instance.playerGirl.head : Assets.instance.playerBoy.head,
                     x + i * 50, y, 50, 50, 120, 120, alphaScale, -alphaScale,
                     alphaRotate);
             batch.setColor(1, 1, 1, 1);
@@ -404,10 +556,12 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
         fpsFont.setColor(1, 1, 1, 1); // white
     }
 
-    private void renderGuiGameOverMessage (SpriteBatch batch) {
+    private void renderGuiOverlay (SpriteBatch batch) {
         if (ValueManager.instance.isGameOver()) {
             gameOverOverlay.render(Gdx.graphics.getDeltaTime());
         }
+        // Render joystick
+        joystickOverlay.render(Gdx.graphics.getDeltaTime());
     }
 
     private void renderGuiFeatherPowerup (SpriteBatch batch) {
@@ -443,6 +597,7 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
         scoreIndicator.dispose();
         shaderMonochrome.dispose();
         gameOverOverlay.dispose();
+        joystickOverlay.dispose();
     }
 
     private void backToMenu () {
@@ -457,28 +612,28 @@ public class GameScreenLogic extends InputAdapter implements Disposable {
     }
 
     private void handleInput(float deltaTime) {
-        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.LEFT) || joystickOverlay.isLeftPressed()) {
             player.left();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.RIGHT) || joystickOverlay.isRightPressed()) {
             player.right();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP) || joystickOverlay.isUpPressed()) {
             player.jump();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN) || joystickOverlay.isDownPressed()) {
             player.down();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q) || joystickOverlay.isMeleePressed()) {
             player.attack();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E) || joystickOverlay.isThrowPressed()) {
             player.attackThrow();
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.X) || joystickOverlay.isClimPressed()) {
             player.climb();
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C) || joystickOverlay.isJumpThrowPressed()) {
             player.jumpThrow();
         }
 

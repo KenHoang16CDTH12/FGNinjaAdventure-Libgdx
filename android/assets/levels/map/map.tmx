@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="2000" height="71" tilewidth="16" tileheight="16" infinite="0" nextlayerid="77" nextobjectid="852">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="2000" height="71" tilewidth="16" tileheight="16" infinite="0" nextlayerid="83" nextobjectid="866">
  <tileset firstgid="1" name="BG" tilewidth="16" tileheight="16" tilecount="8875" columns="125">
   <image source="Level1/BG.png" width="2000" height="1143"/>
  </tileset>
@@ -1195,11 +1195,6 @@
   <object id="715" x="18928" y="48" width="64" height="64"/>
  </objectgroup>
  <objectgroup id="68" name="zombies">
-  <object id="253" x="1184" y="624" width="80" height="128">
-   <properties>
-    <property name="type" type="int" value="1"/>
-   </properties>
-  </object>
   <object id="613" x="5808" y="624" width="80" height="128">
    <properties>
     <property name="type" type="int" value="1"/>
@@ -1330,11 +1325,6 @@
     <property name="type" type="int" value="1"/>
    </properties>
   </object>
-  <object id="725" x="2841.82" y="105.697" width="80" height="128">
-   <properties>
-    <property name="type" type="int" value="1"/>
-   </properties>
-  </object>
   <object id="726" x="3181.21" y="487.515" width="80" height="128">
    <properties>
     <property name="type" type="int" value="1"/>
@@ -1347,14 +1337,37 @@
   </object>
  </objectgroup>
  <objectgroup id="76" name="robots">
-  <object id="849" x="769.697" y="896.97" width="75.7576" height="112.121">
+  <object id="851" x="1850" y="180.303" width="75.7576" height="112.121">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="77" name="adventure_girls">
+  <object id="852" x="3072.73" y="154.545" width="84.8485" height="75.7576">
    <properties>
     <property name="type" type="int" value="0"/>
    </properties>
   </object>
-  <object id="851" x="1850" y="180.303" width="75.7576" height="112.121">
+ </objectgroup>
+ <objectgroup id="78" name="dinos">
+  <object id="854" x="784.848" y="930.303" width="69.697" height="75.7576">
    <properties>
-    <property name="type" type="int" value="1"/>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="82" name="knights">
+  <object id="863" x="1200" y="630.303" width="78.7879" height="115.152">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="81" name="santas">
+  <object id="857" x="166.667" y="224.242" width="84.8485" height="96.9697">
+   <properties>
+    <property name="type" type="int" value="0"/>
    </properties>
   </object>
  </objectgroup>

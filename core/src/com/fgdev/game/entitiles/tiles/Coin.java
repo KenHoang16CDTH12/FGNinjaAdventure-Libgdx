@@ -1,12 +1,12 @@
 package com.fgdev.game.entitiles.tiles;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.math.Ellipse;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.entitiles.Player;
@@ -16,7 +16,7 @@ import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.*;
 
-public class Coin extends ItemObject {
+public class Coin extends ItemObject implements Pool.Poolable {
 
     private static String TAG = Coin.class.getName();
 
@@ -24,11 +24,25 @@ public class Coin extends ItemObject {
 
     private float stateTimer;
 
-    public Coin(World world, MapObject object, ScoreIndicator scoreIndicator) {
-        super(world, object, scoreIndicator);
+    public Coin(World world, ScoreIndicator scoreIndicator) {
+        super(world, scoreIndicator);
         coinAnimation = Assets.instance.goldCoin.animGoldCoin;
+    }
+
+    @Override
+    public void init(MapObject object) {
+        this.object = object;
         stateTimer = 0;
         setBounds(getX(), getY(), 56 / PPM, 56 / PPM);
+        destroyed = false;
+        // Extend method
+        init();
+    }
+
+    @Override
+    public void reset() {
+        coinAnimation = null;
+        stateTimer = 0;
         destroyed = false;
     }
 

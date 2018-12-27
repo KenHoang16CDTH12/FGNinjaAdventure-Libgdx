@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
@@ -15,7 +16,7 @@ import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.PPM;
 
-public class Zombie extends Enemy {
+public class Zombie extends Enemy implements Pool.Poolable {
 
     public static final String TAG = Zombie.class.getName();
 
@@ -41,8 +42,13 @@ public class Zombie extends Enemy {
 
     private float timeDelayDie = 3;
 
-    public Zombie(World world, MapObject mapObject, ScoreIndicator scoreIndicator, int type) {
-        super(world, mapObject, type, scoreIndicator);
+    public Zombie(World world, ScoreIndicator scoreIndicator) {
+        super(world, scoreIndicator);
+    }
+
+    public void init(MapObject mapObject, int type) {
+        this.mapObject = mapObject;
+        this.type = type;
         currentState = State.IDLE;
         previousState = State.IDLE;
         isWalk = true;
@@ -54,7 +60,24 @@ public class Zombie extends Enemy {
         zombieWalk = type == MALE ? zombie.animMaleWalk : zombie.animFeMaleWalk;
         zombieDead = type == MALE ? zombie.animMaleDead : zombie.animFeMaleDead;
         zombieAttack = type == MALE ? zombie.animMaleAttack : zombie.animFeMaleAttack;
+        // Extend Abstract
+        init();
         setRegion((TextureRegion) zombieIdle.getKeyFrame(stateTimer));
+    }
+
+    @Override
+    public void reset() {
+        currentState = State.IDLE;
+        previousState = State.IDLE;
+        isWalk = true;
+        isDead = false;
+        isAttack = false;
+        speed = 1f;
+        Assets.AssetZombie zombie = Assets.instance.zombie;
+        zombieIdle = type == MALE ? zombie.animMaleIdle : zombie.animFeMaleIdle;
+        zombieWalk = type == MALE ? zombie.animMaleWalk : zombie.animFeMaleWalk;
+        zombieDead = type == MALE ? zombie.animMaleDead : zombie.animFeMaleDead;
+        zombieAttack = type == MALE ? zombie.animMaleAttack : zombie.animFeMaleAttack;
     }
 
 

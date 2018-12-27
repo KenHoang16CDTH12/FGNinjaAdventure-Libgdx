@@ -5,28 +5,35 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.BodyFactory;
 
 import static com.fgdev.game.Constants.*;
 
-public class Kunai extends Sprite {
+public class Kunai extends Sprite implements Pool.Poolable {
 
     private TextureAtlas.AtlasRegion kunai;
     private Body body;
     private BodyFactory bodyFactory;
     private float stateTime;
-    private boolean destroyed;
     private boolean setToDestroy;
     private boolean isDirectionRight;
-    private Player player;
+    private World world;
+    private boolean alive;
 
-    public Kunai(Player player, float x, float y, boolean isDirectionRight) {
-        this.player = player;
+    public Kunai(World world) {
+        this.world = world;
+        alive = false;
+        bodyFactory = BodyFactory.getInstance(world);
+    }
+
+    public void init(float x, float y, boolean isDirectionRight) {
         this.isDirectionRight = isDirectionRight;
-        bodyFactory = BodyFactory.getInstance(player.getWorld());
-        kunai = Assets.instance.player.kunai;
+        alive = true;
+        stateTime = 0;
+        kunai = Assets.instance.playerGirl.kunai;
         defineKunai(x, y);
         setRegion(kunai);
         setBounds(x, y, 54 * 2 / PPM, 12 * 2 / PPM);
@@ -49,9 +56,9 @@ public class Kunai extends Sprite {
         stateTime += dt;
         setRegion(getFrame(dt));
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        if((stateTime > 3 || setToDestroy) && !destroyed) {
-            player.getWorld().destroyBody(body);
-            destroyed = true;
+        if((stateTime > 3 || setToDestroy) && alive) {
+            world.destroyBody(body);
+            alive = false;
         }
 
         if((isDirectionRight && body.getLinearVelocity().x < 0) || (!isDirectionRight && body.getLinearVelocity().x > 0))
@@ -78,8 +85,18 @@ public class Kunai extends Sprite {
         setToDestroy = true;
     }
 
-    public boolean isDestroyed(){
-        return destroyed;
+
+    @Override
+    public void reset() {
+        alive = false;
+        body = null;
+        kunai = null;
+        stateTime = 0;
+        setToDestroy = false;
+        isDirectionRight = false;
     }
 
+    public boolean isAlive() {
+        return alive;
+    }
 }

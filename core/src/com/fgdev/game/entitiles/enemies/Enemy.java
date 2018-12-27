@@ -24,18 +24,22 @@ public abstract class Enemy extends Sprite {
     protected boolean toBeDestroyed;
     protected boolean destroyed;
 
-    public Enemy(World world, MapObject mapObject, int type, ScoreIndicator scoreIndicator) {
+    public Enemy(World world, ScoreIndicator scoreIndicator) {
         this.world = world;
-        this.mapObject = mapObject;
-        this.type = type;
         this.scoreIndicator = scoreIndicator;
-        stateTimer = 0;
         bodyFactory = BodyFactory.getInstance(world);
+
+    }
+
+    public void init() {
+        stateTimer = 0;
         toBeDestroyed = false;
         destroyed = false;
         defineEnemy();
         body.setActive(false);
     }
+
+    public abstract void  init(MapObject mapObject, int type);
 
     protected abstract void defineEnemy();
 

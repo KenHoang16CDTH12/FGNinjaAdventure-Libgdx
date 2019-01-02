@@ -22,6 +22,7 @@ import com.fgdev.game.utils.Assets;
  *
  */
 public class GameOverOverlay implements Disposable {
+
 	private static final String GAME_OVER_TEXT = "GAME OVER";
 
 	private final Stage stage;

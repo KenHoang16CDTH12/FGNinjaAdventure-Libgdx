@@ -1,186 +1,253 @@
 package com.fgdev.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.fgdev.game.Constants;
+import com.fgdev.game.logics.GameScreenLogic;
 import com.fgdev.game.utils.Assets;
 
 public class JoystickOverlay implements Disposable {
 
-    private final Stage stage;
+    private static final String TAG = JoystickOverlay.class.getName();
+
+    private Stage stage;
+    private SpriteBatch batch;
+    OrthographicCamera cam;
+    Viewport viewport;
+    GameScreenLogic gameScreenLogic;
 
     private boolean upPressed, downPressed, leftPressed, rightPressed, throwPressed, meleePressed, jumpThrowPressed, climPressed;
 
-    public JoystickOverlay(final Batch batch, OrthographicCamera camera) {
-        stage = new Stage(new ScreenViewport(camera), batch);
+    public JoystickOverlay(SpriteBatch batch, final GameScreenLogic gameScreenLogic) {
+        this.gameScreenLogic = gameScreenLogic;
+        this.batch = batch;
+        cam = new OrthographicCamera();
+        viewport = new FitViewport(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT, cam);
+        stage = new Stage(viewport, batch);
 
-        Gdx.input.setInputProcessor(stage);
-        Table table = new Table();
-        table.left().bottom();
+        final Image imgUp = new Image(Assets.instance.joystick.up);
+        imgUp.setSize(Constants.WINDOW_HEIGHT / 9f, Constants.WINDOW_HEIGHT / 9f);
 
-        Image imgUp = new Image(Assets.instance.joystick.up);
-        imgUp.setSize(50, 50);
+        final Image imgDown = new Image(Assets.instance.joystick.down);
+        imgDown.setSize(Constants.WINDOW_HEIGHT / 9f, Constants.WINDOW_HEIGHT / 9f);
+
+        final Image imgLeft = new Image(Assets.instance.joystick.left);
+        imgLeft.setSize(Constants.WINDOW_HEIGHT / 9f, Constants.WINDOW_HEIGHT / 9f);
+
+        final Image imgRight = new Image(Assets.instance.joystick.right);
+        imgRight.setSize(Constants.WINDOW_HEIGHT / 9f, Constants.WINDOW_HEIGHT / 9f);
+
+        final Image imgThrow = new Image(Assets.instance.joystick.attackThrow);
+        imgThrow.setSize(Constants.WINDOW_HEIGHT / 9f, Constants.WINDOW_HEIGHT / 9f);
+
+        final Image imgMelee = new Image(Assets.instance.joystick.melee);
+        imgMelee.setSize(Constants.WINDOW_HEIGHT / 9f, Constants.WINDOW_HEIGHT / 9f);
+
+        final Image imgJumpThrow = new Image(Assets.instance.joystick.jumpThrow);
+        imgJumpThrow.setSize(Constants.WINDOW_HEIGHT / 9f, Constants.WINDOW_HEIGHT / 9f);
+
+        final Image imgClimb = new Image(Assets.instance.joystick.climb);
+        imgClimb.setSize(Constants.WINDOW_HEIGHT / 9f, Constants.WINDOW_HEIGHT / 9f);
+
+        Table tableLeft = new Table();
+        tableLeft.left().bottom();
+
+        tableLeft.add();
+        tableLeft.add(imgClimb).size(imgClimb.getWidth(), imgClimb.getHeight());
+        tableLeft.add();
+        tableLeft.row().pad(5, 5, 5, 5);
+        tableLeft.add(imgLeft).size(imgLeft.getWidth(), imgLeft.getHeight());
+        tableLeft.add();
+        tableLeft.add(imgRight).size(imgRight.getWidth(), imgRight.getHeight());
+        tableLeft.row().padBottom(5);
+        tableLeft.add();
+        tableLeft.add(imgDown).size(imgDown.getWidth(), imgDown.getHeight());
+        tableLeft.add();
+
+        Table tableRight = new Table();
+        tableRight.right().bottom();
+
+        tableRight.add();
+        tableRight.add(imgUp).size(imgUp.getWidth(), imgUp.getHeight());
+        tableRight.add();
+        tableRight.row().pad(5, 5, 5, 5);
+        tableRight.add(imgThrow).size(imgThrow.getWidth(), imgThrow.getHeight());
+        tableRight.add();
+        tableRight.add(imgMelee).size(imgMelee.getWidth(), imgMelee.getHeight());
+        tableRight.row().padBottom(5);
+        tableRight.add();
+        tableRight.add(imgJumpThrow).size(imgJumpThrow.getWidth(), imgJumpThrow.getHeight());
+        tableRight.add();
+
         imgUp.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 upPressed = true;
-                Gdx.app.error("Touch", "true");
-                return super.touchDown(event, x, y, pointer, button);
+                imgUp.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.upHover)));
+                return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 upPressed = false;
-                super.touchUp(event, x, y, pointer, button);
+                imgUp.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.up)));
             }
         });
-
-        Image imgDown = new Image(Assets.instance.joystick.down);
-        imgDown.setSize(50, 50);
         imgDown.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 downPressed = true;
-                return super.touchDown(event, x, y, pointer, button);
+                imgDown.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.downHover)));
+                return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 downPressed = false;
-                super.touchUp(event, x, y, pointer, button);
+                imgDown.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.down)));
             }
         });
 
-        Image imgLeft = new Image(Assets.instance.joystick.left);
-        imgLeft.setSize(50, 50);
         imgLeft.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 leftPressed = true;
-                return super.touchDown(event, x, y, pointer, button);
+                imgLeft.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.leftHover)));
+                return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 leftPressed = false;
-                super.touchUp(event, x, y, pointer, button);
+                imgLeft.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.left)));
             }
         });
-
-        Image imgRight = new Image(Assets.instance.joystick.right);
-        imgRight.setSize(50, 50);
         imgRight.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 rightPressed = true;
-                return super.touchDown(event, x, y, pointer, button);
+                imgRight.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.rightHover)));
+                return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 rightPressed = false;
-                super.touchUp(event, x, y, pointer, button);
+                imgRight.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.right)));
             }
         });
-
-        Image imgThrow = new Image(Assets.instance.joystick.attackThrow);
-        imgThrow.setSize(50, 50);
         imgThrow.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 throwPressed = true;
-                return super.touchDown(event, x, y, pointer, button);
+                imgThrow.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.attackThrowHover)));
+                return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 throwPressed = false;
-                super.touchUp(event, x, y, pointer, button);
+                imgThrow.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.attackThrow)));
             }
         });
 
-        Image imgMelee = new Image(Assets.instance.joystick.melee);
-        imgMelee.setSize(50, 50);
         imgMelee.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 meleePressed = true;
-                return super.touchDown(event, x, y, pointer, button);
+                imgMelee.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.meleeHover)));
+                return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 meleePressed = false;
-                super.touchUp(event, x, y, pointer, button);
+                imgMelee.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.melee)));
             }
         });
 
-        Image imgJumpThrow = new Image(Assets.instance.joystick.jumpThrow);
-        imgJumpThrow.setSize(50, 50);
         imgJumpThrow.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 jumpThrowPressed = true;
-                return super.touchDown(event, x, y, pointer, button);
+                imgJumpThrow.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.jumpThrowHover)));
+                return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 jumpThrowPressed = false;
-                super.touchUp(event, x, y, pointer, button);
+                imgJumpThrow.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.jumpThrow)));
             }
         });
 
-        Image imgClimb = new Image(Assets.instance.joystick.climb);
-        imgClimb.setSize(50, 50);
         imgClimb.addListener(new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 climPressed = true;
-                return super.touchDown(event, x, y, pointer, button);
+                imgClimb.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.climbHover)));
+                return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 climPressed = false;
-                super.touchUp(event, x, y, pointer, button);
+                imgClimb.setDrawable(new SpriteDrawable(new Sprite(Assets.instance.joystick.climb)));
+            }
+        });
+        stage.clear();
+        Stack stack = new Stack();
+        stack.setSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+        stack.add(tableLeft);
+        stack.add(tableRight);
+        stage.addActor(stack);
+
+        stage.addListener(new InputListener(){
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                switch(keycode){
+
+                }
+                return true;
+            }
+
+            @Override
+            public boolean keyUp(InputEvent event, int keycode) {
+                switch(keycode) {
+                    case Input.Keys.R:
+                        break;
+                    case Input.Keys.ENTER:
+                        break;
+                    case Input.Keys.BACK:
+                    case Input.Keys.ESCAPE:
+                        gameScreenLogic.backToMenu();
+                        break;
+                }
+                return true;
             }
         });
 
-        table.add();
-        table.add(imgUp).size(imgUp.getWidth(), imgUp.getHeight());
-        table.add();
-        table.row().pad(5, 5, 5, 5);
-        table.add(imgLeft).size(imgLeft.getWidth(), imgLeft.getHeight());
-        table.add();
-        table.add(imgRight).size(imgRight.getWidth(), imgRight.getHeight());
-        table.row().padBottom(5);
-        table.add();
-        table.add(imgDown).size(imgDown.getWidth(), imgDown.getHeight());
-        table.add();
-
-        stage.addActor(table);
     }
 
-    public void render(final float delta) {
-
-        stage.getBatch().end();
-        stage.act(delta);
+    public void render() {
         stage.draw();
-        stage.getBatch().begin();
     }
 
     public void resize(final int width, final int height) {
-        stage.getViewport().update(width, height);
+        viewport.update(width, height);
     }
 
     @Override
@@ -218,5 +285,9 @@ public class JoystickOverlay implements Disposable {
 
     public boolean isClimPressed() {
         return climPressed;
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

@@ -11,25 +11,18 @@ public class BodyFactory {
     public static final int GROUND = 1;
     public static final int SIGN = 2;
     public static final int KUNAI = 3;
-    public static final int COIN = 4;
+    public static final int ITEM = 4;
     public static final int CRATE = 5;
-    public static final int FEATHER = 6;
-    public static final int PLAYER = 7;
-    public static final int PLAYER_SENSOR = 8;
-    public static final int PLAYER_ATTACK = 9;
-    public static final int ZOMBIE = 10;
-    public static final int ZOMBIE_SENSOR = 11;
+    public static final int PLAYER = 6;
+    public static final int PLAYER_SENSOR = 7;
+    public static final int PLAYER_ATTACK = 8;
+    public static final int ENEMY = 9;
+    public static final int ENEMY_SENSOR = 10;
+    public static final int ENEMY_DISABLE_PLAYER = 11;
     public static final int HIDDEN_WALL = 12;
-    public static final int ROBOT = 13;
-    public static final int ROBOT_SENSOR = 14;
-    public static final int ADVENTURE_GIRL = 15;
-    public static final int ADVENTURE_GIRL_SENSOR = 16;
-    public static final int DINO = 17;
-    public static final int DINO_SENSOR = 18;
-    public static final int KNIGHT = 19;
-    public static final int KNIGHT_SENSOR = 20;
-    public static final int SANTA = 21;
-    public static final int SANTA_SENSOR = 22;
+    public static final int SPIKE = 13;
+    public static final int BULLET = 14;
+    public static final int LADDER = 15;
 
     private final float DEGTORAD = 0.0174533f;
 
@@ -56,102 +49,71 @@ public class BodyFactory {
         switch(material){
             case GROUND:
                 fixtureDef.filter.categoryBits = GROUND_BIT;
-                fixtureDef.filter.maskBits = PLAYER_BIT | CRATE_BIT | ZOMBIE_BIT | ROBOT_BIT | ADVENTURE_GIRL_BIT | DINO_BIT | KNIGHT_BIT | SANTA_BIT;
+                fixtureDef.filter.maskBits = PLAYER_BIT | CRATE_BIT | ENEMY_BIT | SPIKE_BIT;
                 break;
             case SIGN:
                 fixtureDef.filter.categoryBits = SIGN_BIT;
                 fixtureDef.filter.maskBits = PLAYER_BIT;
                 fixtureDef.isSensor = true;
                 break;
-            case COIN:
-                fixtureDef.filter.categoryBits = COIN_BIT;
+            case ITEM:
+                fixtureDef.filter.categoryBits = ITEM_BIT;
                 fixtureDef.filter.maskBits = PLAYER_BIT;
                 fixtureDef.isSensor = true;
                 break;
             case CRATE:
                 fixtureDef.filter.categoryBits = CRATE_BIT;
-                fixtureDef.filter.maskBits = CRATE_BIT | GROUND_BIT | ATTACK_BIT | KUNAI_BIT | PLAYER_BIT | ZOMBIE_BIT | ROBOT_BIT | ADVENTURE_GIRL_BIT | DINO_BIT | KNIGHT_BIT | SANTA_BIT;
-                break;
-            case FEATHER:
-                fixtureDef.filter.categoryBits = FEATHER_BIT;
-                fixtureDef.filter.maskBits = PLAYER_BIT;
-                fixtureDef.isSensor = true;
+                fixtureDef.filter.maskBits = CRATE_BIT | GROUND_BIT | ATTACK_BIT | KUNAI_BIT | PLAYER_BIT | ENEMY_BIT | SPIKE_BIT | BULLET_BIT;
                 break;
             case PLAYER:
                 fixtureDef.filter.categoryBits = PLAYER_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT | ZOMBIE_BIT | ROBOT_BIT | ADVENTURE_GIRL_BIT | DINO_BIT | KNIGHT_BIT | SANTA_BIT;
+                fixtureDef.filter.maskBits = GROUND_BIT | ITEM_BIT | CRATE_BIT | SIGN_BIT | ENEMY_BIT | SPIKE_BIT | BULLET_BIT | LADDER_BIT;
                 break;
             case PLAYER_SENSOR:
                 fixtureDef.filter.categoryBits = PLAYER_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | FEATHER_BIT | COIN_BIT | CRATE_BIT | SIGN_BIT | ZOMBIE_BIT | ROBOT_BIT | ADVENTURE_GIRL_BIT | DINO_BIT | KNIGHT_BIT | SANTA_BIT;
+                fixtureDef.filter.maskBits = GROUND_BIT | ITEM_BIT | CRATE_BIT | SIGN_BIT | ENEMY_BIT | SPIKE_BIT| BULLET_BIT | LADDER_BIT;
                 fixtureDef.isSensor = true;
                 break;
             case PLAYER_ATTACK:
                 fixtureDef.filter.categoryBits = ATTACK_BIT;
-                fixtureDef.filter.maskBits = CRATE_BIT | ZOMBIE_BIT | ROBOT_BIT | ADVENTURE_GIRL_BIT | DINO_BIT | KNIGHT_BIT | SANTA_BIT;
+                fixtureDef.filter.maskBits = CRATE_BIT | ENEMY_BIT | SPIKE_BIT;
                 fixtureDef.isSensor = true;
                 break;
             case KUNAI:
                 fixtureDef.filter.categoryBits = KUNAI_BIT;
-                fixtureDef.filter.maskBits = CRATE_BIT | ZOMBIE_BIT | ROBOT_BIT | ADVENTURE_GIRL_BIT | DINO_BIT | KNIGHT_BIT | SANTA_BIT;
+                fixtureDef.filter.maskBits = CRATE_BIT | ENEMY_BIT | SPIKE_BIT | BULLET_BIT;
                 fixtureDef.isSensor = true;
                 break;
-            case ZOMBIE:
-                fixtureDef.filter.categoryBits = ZOMBIE_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT;
+            case ENEMY:
+                fixtureDef.filter.categoryBits = ENEMY_BIT;
+                fixtureDef.filter.maskBits = GROUND_BIT | CRATE_BIT | PLAYER_BIT | SPIKE_BIT;
                 break;
-            case ZOMBIE_SENSOR:
-                fixtureDef.filter.categoryBits = ZOMBIE_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT | ATTACK_BIT | KUNAI_BIT;
+            case ENEMY_SENSOR:
+                fixtureDef.filter.categoryBits = ENEMY_BIT;
+                fixtureDef.filter.maskBits = GROUND_BIT | CRATE_BIT | ATTACK_BIT | KUNAI_BIT | SPIKE_BIT | HIDDEN_WALL_BIT;
+                fixtureDef.isSensor = true;
+                break;
+            case ENEMY_DISABLE_PLAYER:
+                fixtureDef.filter.categoryBits = ENEMY_BIT;
+                fixtureDef.filter.maskBits = GROUND_BIT | CRATE_BIT | ATTACK_BIT | KUNAI_BIT | SPIKE_BIT | HIDDEN_WALL_BIT;
                 fixtureDef.isSensor = true;
                 break;
             case HIDDEN_WALL:
                 fixtureDef.filter.categoryBits = HIDDEN_WALL_BIT;
-                fixtureDef.filter.maskBits = ZOMBIE_BIT | ROBOT_BIT | ADVENTURE_GIRL_BIT | DINO_BIT | KNIGHT_BIT | SANTA_BIT;
+                fixtureDef.filter.maskBits = ENEMY_BIT | SPIKE_BIT;
                 break;
-            case ROBOT:
-                fixtureDef.filter.categoryBits = ROBOT_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT;
+            case SPIKE:
+                fixtureDef.filter.categoryBits = SPIKE_BIT;
+                fixtureDef.filter.maskBits = PLAYER_BIT | CRATE_BIT | ENEMY_BIT;
                 break;
-            case ROBOT_SENSOR:
-                fixtureDef.filter.categoryBits = ROBOT_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT | ATTACK_BIT | KUNAI_BIT;
+            case BULLET:
+                fixtureDef.filter.categoryBits = BULLET_BIT;
+                fixtureDef.filter.maskBits = PLAYER_BIT | CRATE_BIT | KUNAI_BIT;
                 fixtureDef.isSensor = true;
                 break;
-            case ADVENTURE_GIRL:
-                fixtureDef.filter.categoryBits = ADVENTURE_GIRL_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT;
-                break;
-            case ADVENTURE_GIRL_SENSOR:
-                fixtureDef.filter.categoryBits = ADVENTURE_GIRL_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT | ATTACK_BIT | KUNAI_BIT;
-                fixtureDef.isSensor = true;
-                break;
-            case DINO:
-                fixtureDef.filter.categoryBits = DINO_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT;
-                break;
-            case DINO_SENSOR:
-                fixtureDef.filter.categoryBits = DINO_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT | ATTACK_BIT | KUNAI_BIT;
-                fixtureDef.isSensor = true;
-                break;
-            case KNIGHT:
-                fixtureDef.filter.categoryBits = KNIGHT_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT;
-                break;
-            case KNIGHT_SENSOR:
-                fixtureDef.filter.categoryBits = KNIGHT_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT | ATTACK_BIT | KUNAI_BIT;
-                fixtureDef.isSensor = true;
-                break;
-            case SANTA:
-                fixtureDef.filter.categoryBits = SANTA_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT;
-                break;
-            case SANTA_SENSOR:
-                fixtureDef.filter.categoryBits = SANTA_BIT;
-                fixtureDef.filter.maskBits =  GROUND_BIT | CRATE_BIT | PLAYER_BIT | ATTACK_BIT | KUNAI_BIT;
+            case LADDER:
+                fixtureDef.filter.categoryBits = LADDER_BIT;
+                fixtureDef.filter.maskBits = PLAYER_BIT;
                 fixtureDef.isSensor = true;
                 break;
             case NOTHING:

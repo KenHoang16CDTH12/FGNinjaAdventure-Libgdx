@@ -9,10 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
+import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.BodyFactory;
-import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.PPM;
 
@@ -35,14 +35,9 @@ public class Knight extends Enemy implements Pool.Poolable {
     private Animation knightWalk;
     private Animation knightJump;
 
-    private float speed;
-
     private boolean isRun;
-    private boolean isDead;
     private boolean isAttack;
     private boolean isSlide;
-
-    private float timeDelayDie = 3;
 
     public Knight(World world, ScoreIndicator scoreIndicator) {
         super(world, scoreIndicator);
@@ -76,44 +71,14 @@ public class Knight extends Enemy implements Pool.Poolable {
     }
 
     public void update(float dt) {
-        if (destroyed) {
-            return;
+        if (isRun) {
+            running();
         }
-        if (isDead) {
-            timeDelayDie -= dt;
-            if (timeDelayDie < 0) {
-                queueDestroy();
-                // Sound
-                ValueManager.instance.score += score();
-                scoreIndicator.addScoreItem(getX(), getY(), score());
-            }
-        }
-        if (toBeDestroyed) {
-            world.destroyBody(body);
-            setBounds(0, 0, 0, 0);
-            destroyed = true;
-            return;
-        }
-        if (!body.isActive()) {
-            return;
-        }
-        setBoundForRegion();
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        setRegion(getFrame(dt));
+        super.update(dt);
     }
 
-    private void walking() {
-        checkMovingDirection();
-        float velocityY = body.getLinearVelocity().y;
-        if (runningRight) {
-            body.setLinearVelocity(new Vector2(speed, velocityY));
-        }
-        else {
-            body.setLinearVelocity(new Vector2(-speed, velocityY));
-        }
-    }
-
-    private void setBoundForRegion() {
+    @Override
+    protected void setBoundForRegion() {
         currentState = getState();
         switch (currentState) {
             case DEAD:
@@ -131,7 +96,8 @@ public class Knight extends Enemy implements Pool.Poolable {
         }
     }
 
-    private TextureRegion getFrame(float dt) {
+    @Override
+    protected TextureRegion getFrame(float dt) {
         currentState = getState();
         TextureRegion region;
         //depending on the state, get corresponding animation KeyFrame
@@ -143,7 +109,7 @@ public class Knight extends Enemy implements Pool.Poolable {
                 region = (TextureRegion) knightDead.getKeyFrame(stateTimer);
                 break;
             case ATTACK:
-                region = (TextureRegion) knightAttack.getKeyFrame(stateTimer);
+                region = (TextureRegion) knightAttack.getKeyFrame(stateTimer, true);
                 break;
             case JUMP_ATTACK:
                 region = (TextureRegion) knightJumpAttack.getKeyFrame(stateTimer);
@@ -159,19 +125,16 @@ public class Knight extends Enemy implements Pool.Poolable {
                 region = (TextureRegion) knightIdle.getKeyFrame(stateTimer,true);
                 break;
         }
-        //if player is running left and the texture isnt facing left... flip it.
+
+        //if object is running left and the texture isnt facing left... flip it.
         if ((body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
             region.flip(true, false);
             runningRight = false;
         }
-        //if player is running right and the texture isnt facing right... flip it.
+        //if object is running right and the texture isnt facing right... flip it.
         else if ((body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX()) {
             region.flip(true, false);
             runningRight = true;
-        }
-
-        if (isRun) {
-            walking();
         }
 
         //if the current state is the same as the previous state increase the state timer.
@@ -179,9 +142,9 @@ public class Knight extends Enemy implements Pool.Poolable {
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
         //update previous state
         previousState = currentState;
+
         return region;
     }
-
 
     private State getState() {
         if (isDead)
@@ -204,7 +167,7 @@ public class Knight extends Enemy implements Pool.Poolable {
                 posy,
                 width,
                 height,
-                BodyFactory.KNIGHT_SENSOR,
+                BodyFactory.ENEMY_DISABLE_PLAYER,
                 BodyDef.BodyType.DynamicBody,
                 this
         );
@@ -214,14 +177,14 @@ public class Knight extends Enemy implements Pool.Poolable {
                 10 / PPM,
                 new Vector2(0, (-height - 60) / PPM),
                 0,
-                BodyFactory.KNIGHT_SENSOR,
+                BodyFactory.ENEMY_SENSOR,
                 this
         );
         // create keep shape
         bodyFactory.makeEdgeSensor(body,
                 new Vector2(0, (-height - 80) / PPM),
                 new Vector2(6.8f / PPM / 6, 6.8f / PPM * 3),
-                BodyFactory.KNIGHT,
+                BodyFactory.ENEMY,
                 this
         );
     }
@@ -245,5 +208,21 @@ public class Knight extends Enemy implements Pool.Poolable {
         isDead = true;
         isRun = false;
         becomeDead();
+    }
+
+    @Override
+    public void beginAttack(Player player) {
+        setRegion((TextureRegion) knightAttack.getKeyFrame(stateTimer));
+        player.playerDie();
+        isAttack = true;
+        isRun = false;
+        body.getLinearVelocity().x = 0;
+    }
+
+    @Override
+    public void endAttack(Player player) {
+        setRegion((TextureRegion) knightIdle.getKeyFrame(stateTimer));
+        isRun = true;
+        isAttack = false;
     }
 }

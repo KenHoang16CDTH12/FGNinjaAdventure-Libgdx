@@ -20,6 +20,7 @@ import com.fgdev.game.screens.transitions.ScreenTransitionFade;
 import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.Constants;
 import com.fgdev.game.utils.GamePreferences;
+import com.fgdev.game.utils.ValueManager;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -79,6 +80,7 @@ public class MenuScreen extends AbstractGameScreen {
         stack.add(layerControls);
         stage.addActor(layerOptionsWindow);
     }
+
     @Override
     public void render(float deltaTime) {
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -103,6 +105,7 @@ public class MenuScreen extends AbstractGameScreen {
     public void show() {
         stage = new Stage(new StretchViewport(Constants.WINDOW_WIDTH,
                 Constants.WINDOW_HEIGHT));
+        ValueManager.instance.init();
         AudioManager.instance.play(Assets.instance.music.menuBackground);
         rebuildStage();
     }
@@ -128,9 +131,11 @@ public class MenuScreen extends AbstractGameScreen {
         Table layer = new Table();
         // + Background
         imgBackground = new Image(skinFGDev, "background");
-        layer.add(imgBackground);
+        imgBackground.setSize(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+        layer.add(imgBackground).size(imgBackground.getWidth(), imgBackground.getHeight());
         return layer;
     }
+
     private Table buildObjectsLayer () {
         Table layer = new Table();
         // + Coins
@@ -241,9 +246,8 @@ public class MenuScreen extends AbstractGameScreen {
     }
 
     private void onSaveClicked() {
-        saveSettings();
         onCancelClicked();
-        AudioManager.instance.onSettingsUpdated();
+        saveSettings();
     }
     private void onCancelClicked() {
         showMenuButtons(true);
@@ -252,13 +256,9 @@ public class MenuScreen extends AbstractGameScreen {
     }
 
     private void onPlayClicked () {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                ScreenTransition transition = ScreenTransitionFade.init(0.5f);
-                game.setScreen(new GameScreen(game), transition);
-            }
-        });
+        // switch to menu screen
+        ScreenTransition transition = ScreenTransitionFade.init(0.75f);
+        game.setScreen(new GameScreen(game), transition);
     }
 
     private void onOptionsClicked () {

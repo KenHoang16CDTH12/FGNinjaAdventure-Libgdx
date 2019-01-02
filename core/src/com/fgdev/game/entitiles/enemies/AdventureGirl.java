@@ -1,6 +1,7 @@
 package com.fgdev.game.entitiles.enemies;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -9,10 +10,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
+import com.fgdev.game.entitiles.Player;
+import com.fgdev.game.entitiles.bullets.EnemyBullet;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.BodyFactory;
-import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.PPM;
 
@@ -38,15 +40,13 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
     private Animation adventureGirlSlide;
     private Animation adventureGirlJump;
 
-    private float speed;
-
     private boolean isRun;
-    private boolean isDead;
     private boolean isShoot;
     private boolean isMelee;
     private boolean isSlide;
 
-    private float timeDelayDie = 3;
+    private float timeDelayIdle = 1;
+    private float timeDelayRun = 3;
 
     public AdventureGirl(World world, ScoreIndicator scoreIndicator) {
         super(world, scoreIndicator);
@@ -88,44 +88,42 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
     }
 
     public void update(float dt) {
-        if (destroyed) {
-            return;
+        if (timeDelayIdle > 0) {
+            timeDelayIdle -= dt;
+            if (timeDelayIdle < 0) timeDelayRun = 3;
         }
-        if (isDead) {
-            timeDelayDie -= dt;
-            if (timeDelayDie < 0) {
-                queueDestroy();
-                // Sound
-                ValueManager.instance.score += score();
-                scoreIndicator.addScoreItem(getX(), getY(), score());
+
+        if (isRun) {
+            if (timeDelayRun > 0) {
+                timeDelayRun -= dt;
+                running();
+            }
+            if (timeDelayRun < 0 && timeDelayIdle < 0) {
+                previousState = State.SHOOT;
+                isShoot = true;
+            }
+
+        }
+
+        // spawn
+        handleSpawningBullet();
+
+        // update bullets
+        for (EnemyBullet bullet : bullets) {
+            bullet.update(dt);
+        }
+        // clean
+        for (int i = 0; i < bullets.size; i++) {
+            if (!bullets.get(i).isAlive()) {
+                bullets.removeIndex(i);
             }
         }
-        if (toBeDestroyed) {
-            world.destroyBody(body);
-            setBounds(0, 0, 0, 0);
-            destroyed = true;
-            return;
-        }
-        if (!body.isActive()) {
-            return;
-        }
-        setBoundForRegion();
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        setRegion(getFrame(dt));
+
+        super.update(dt);
     }
 
-    private void walking() {
-        checkMovingDirection();
-        float velocityY = body.getLinearVelocity().y;
-        if (runningRight) {
-            body.setLinearVelocity(new Vector2(speed, velocityY));
-        }
-        else {
-            body.setLinearVelocity(new Vector2(-speed, velocityY));
-        }
-    }
-
-    private void setBoundForRegion() {
+    @Override
+    protected void setBoundForRegion() {
         currentState = getState();
         switch (currentState) {
             case DEAD:
@@ -143,7 +141,8 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
         }
     }
 
-    private TextureRegion getFrame(float dt) {
+    @Override
+    protected TextureRegion getFrame(float dt) {
         currentState = getState();
         TextureRegion region;
         //depending on the state, get corresponding animation KeyFrame
@@ -156,9 +155,19 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
                 break;
             case SHOOT:
                 region = (TextureRegion) adventureGirlShoot.getKeyFrame(stateTimer);
+                if (adventureGirlShoot.isAnimationFinished(stateTimer)) {
+                    if (isShoot) {
+                        float x = runningRight ? 1f : -1f;
+                        float y = -0.1f;
+                        // if you want to spawn a new bullet:
+                        addSpawnBullet(body.getPosition().x + x, body.getPosition().y + y, runningRight ? true : false);
+                        isShoot = false;
+                        timeDelayIdle = 1;
+                    }
+                }
                 break;
             case MELEE:
-                region = (TextureRegion) adventureGirlMelee.getKeyFrame(stateTimer);
+                region = (TextureRegion) adventureGirlMelee.getKeyFrame(stateTimer, true);
                 break;
             case SLIDE:
                 region = (TextureRegion) adventureGirlSlide.getKeyFrame(stateTimer);
@@ -171,6 +180,7 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
                 region = (TextureRegion) adventureGirlIdle.getKeyFrame(stateTimer,true);
                 break;
         }
+
         //if player is running left and the texture isnt facing left... flip it.
         if ((body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
             region.flip(true, false);
@@ -182,10 +192,6 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
             runningRight = true;
         }
 
-        if (isRun) {
-            walking();
-        }
-
         //if the current state is the same as the previous state increase the state timer.
         //otherwise the state has changed and we need to reset timer.
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
@@ -193,7 +199,6 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
         previousState = currentState;
         return region;
     }
-
 
     private State getState() {
         if (isDead)
@@ -211,6 +216,16 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
             return State.IDLE;
     }
 
+    @Override
+    public void draw(Batch batch) {
+        super.draw(batch);
+
+        // draw bullets
+        for (EnemyBullet bullet : bullets) {
+            bullet.draw(batch);
+        }
+    }
+
     private void makeBoxRobotBody(float posx, float posy) {
         float width = (96 - 45)/ PPM;
         float height = (81 - 10) / PPM;
@@ -220,7 +235,7 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
                 posy,
                 width,
                 height,
-                BodyFactory.ADVENTURE_GIRL_SENSOR,
+                BodyFactory.ENEMY_DISABLE_PLAYER,
                 BodyDef.BodyType.DynamicBody,
                 this
         );
@@ -230,14 +245,14 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
                 10 / PPM,
                 new Vector2(0, (-height - 60) / PPM),
                 0,
-                BodyFactory.ADVENTURE_GIRL_SENSOR,
+                BodyFactory.ENEMY_SENSOR,
                 this
         );
         // create keep shape
         bodyFactory.makeEdgeSensor(body,
                 new Vector2(0, (-height - 60) / PPM),
                 new Vector2(6.8f / PPM / 6, 6.8f / PPM * 3),
-                BodyFactory.ADVENTURE_GIRL,
+                BodyFactory.ENEMY,
                 this
         );
     }
@@ -252,7 +267,7 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
 
     @Override
     public int score() {
-        return 500;
+        return 150;
     }
 
     @Override
@@ -261,5 +276,21 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
         isDead = true;
         isRun = false;
         becomeDead();
+    }
+
+    @Override
+    public void beginAttack(Player player) {
+        setRegion((TextureRegion) adventureGirlMelee.getKeyFrame(stateTimer));
+        player.playerDie();
+        isMelee = true;
+        isRun = false;
+        body.getLinearVelocity().x = 0;
+    }
+
+    @Override
+    public void endAttack(Player player) {
+        setRegion((TextureRegion) adventureGirlIdle.getKeyFrame(stateTimer));
+        isRun = true;
+        isMelee = false;
     }
 }

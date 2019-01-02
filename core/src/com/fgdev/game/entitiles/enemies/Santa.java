@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Pool;
+import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.BodyFactory;
@@ -34,14 +35,10 @@ public class Santa extends Enemy implements Pool.Poolable {
     private Animation santaWalk;
     private Animation santaJump;
 
-    private float speed;
-
     private boolean isRun;
-    private boolean isDead;
     private boolean isAttack;
     private boolean isSlide;
 
-    private float timeDelayDie = 3;
 
     public Santa(World world, ScoreIndicator scoreIndicator) {
         super(world, scoreIndicator);
@@ -80,48 +77,19 @@ public class Santa extends Enemy implements Pool.Poolable {
     }
 
     public void update(float dt) {
-        if (destroyed) {
-            return;
+        if (isRun) {
+            running();
         }
-        if (isDead) {
-            timeDelayDie -= dt;
-            if (timeDelayDie < 0) {
-                queueDestroy();
-                // Sound
-                ValueManager.instance.score += score();
-                scoreIndicator.addScoreItem(getX(), getY(), score());
-            }
-        }
-        if (toBeDestroyed) {
-            world.destroyBody(body);
-            setBounds(0, 0, 0, 0);
-            destroyed = true;
-            return;
-        }
-        if (!body.isActive()) {
-            return;
-        }
-        setBoundForRegion();
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        setRegion(getFrame(dt));
+        super.update(dt);
     }
 
-    private void walking() {
-        checkMovingDirection();
-        float velocityY = body.getLinearVelocity().y;
-        if (runningRight) {
-            body.setLinearVelocity(new Vector2(speed, velocityY));
-        }
-        else {
-            body.setLinearVelocity(new Vector2(-speed, velocityY));
-        }
-    }
-
-    private void setBoundForRegion() {
+    @Override
+    protected void setBoundForRegion() {
         setBounds(0, 0, 103 * 2  / PPM, 71 * 2 / PPM);
     }
 
-    private TextureRegion getFrame(float dt) {
+    @Override
+    protected TextureRegion getFrame(float dt) {
         currentState = getState();
         TextureRegion region;
         //depending on the state, get corresponding animation KeyFrame
@@ -139,7 +107,7 @@ public class Santa extends Enemy implements Pool.Poolable {
                 region = (TextureRegion) santaWalk.getKeyFrame(stateTimer, true);
                 break;
             case JUMP:
-                region = (TextureRegion) santaJump.getKeyFrame(stateTimer);
+                region = (TextureRegion) santaJump.getKeyFrame(stateTimer, true);
                 break;
             case IDLE:
             default:
@@ -157,10 +125,6 @@ public class Santa extends Enemy implements Pool.Poolable {
             runningRight = true;
         }
 
-        if (isRun) {
-            walking();
-        }
-
         //if the current state is the same as the previous state increase the state timer.
         //otherwise the state has changed and we need to reset timer.
         stateTimer = currentState == previousState ? stateTimer + dt : 0;
@@ -175,6 +139,8 @@ public class Santa extends Enemy implements Pool.Poolable {
             return State.DEAD;
         else if (body.getLinearVelocity().x != 0)
             return State.RUN;
+        else if (isAttack)
+            return State.JUMP;
             // if none of these return then he must be standing
         else
             return State.IDLE;
@@ -189,7 +155,7 @@ public class Santa extends Enemy implements Pool.Poolable {
                 posy,
                 width,
                 height,
-                BodyFactory.SANTA_SENSOR,
+                BodyFactory.ENEMY_DISABLE_PLAYER,
                 BodyDef.BodyType.DynamicBody,
                 this
         );
@@ -199,14 +165,14 @@ public class Santa extends Enemy implements Pool.Poolable {
                 10 / PPM,
                 new Vector2(0, (-height - 60) / PPM),
                 0,
-                BodyFactory.SANTA_SENSOR,
+                BodyFactory.ENEMY_SENSOR,
                 this
         );
         // create keep shape
         bodyFactory.makeEdgeSensor(body,
                 new Vector2(0, (-height - 50) / PPM),
                 new Vector2(6.8f / PPM / 6, 6.8f / PPM * 3),
-                BodyFactory.SANTA,
+                BodyFactory.ENEMY,
                 this
         );
     }
@@ -230,5 +196,21 @@ public class Santa extends Enemy implements Pool.Poolable {
         isDead = true;
         isRun = false;
         becomeDead();
+    }
+
+    @Override
+    public void beginAttack(Player player) {
+        setRegion((TextureRegion) santaJump.getKeyFrame(stateTimer));
+        player.playerDie();
+        isAttack = true;
+        isRun = false;
+        body.getLinearVelocity().x = 0;
+    }
+
+    @Override
+    public void endAttack(Player player) {
+        setRegion((TextureRegion) santaIdle.getKeyFrame(stateTimer));
+        isRun = true;
+        isAttack = false;
     }
 }

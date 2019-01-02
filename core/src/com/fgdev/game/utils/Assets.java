@@ -44,6 +44,8 @@ public class Assets implements Disposable, AssetErrorListener {
     public AssetDino dino;
     public AssetKnight knight;
     public AssetSanta santa;
+    public AssetGhost ghost;
+    public AssetBone bone;
 
     // Joysticks
     public AssetJoystick joystick;
@@ -60,6 +62,7 @@ public class Assets implements Disposable, AssetErrorListener {
         assetManager.load("images/bg1.png", Texture.class);
         assetManager.load("images/bg2.png", Texture.class);
         assetManager.load("images/bg3.png", Texture.class);
+        assetManager.load("images/bg4.png", Texture.class);
         // load texture atlas
         assetManager.load(Constants.TEXTURE_ATLAS_ITEM, TextureAtlas.class);
         assetManager.load(Constants.TEXTURE_ATLAS_PLAYER_BOY, TextureAtlas.class);
@@ -70,6 +73,8 @@ public class Assets implements Disposable, AssetErrorListener {
         assetManager.load(Constants.TEXTURE_ATLAS_DINO, TextureAtlas.class);
         assetManager.load(Constants.TEXTURE_ATLAS_KNIGHT, TextureAtlas.class);
         assetManager.load(Constants.TEXTURE_ATLAS_SANTA, TextureAtlas.class);
+        assetManager.load(Constants.TEXTURE_ATLAS_GHOST, TextureAtlas.class);
+        assetManager.load(Constants.TEXTURE_ATLAS_BONE, TextureAtlas.class);
         assetManager.load(Constants.TEXTURE_ATLAS_JOYSTICK, TextureAtlas.class);
         // load sounds
         assetManager.load("sounds/click.wav", Sound.class);
@@ -102,6 +107,8 @@ public class Assets implements Disposable, AssetErrorListener {
         TextureAtlas atlasDino = getAtlas(Constants.TEXTURE_ATLAS_DINO);
         TextureAtlas atlasKnight = getAtlas(Constants.TEXTURE_ATLAS_KNIGHT);
         TextureAtlas atlasSanta = getAtlas(Constants.TEXTURE_ATLAS_SANTA);
+        TextureAtlas atlasGhost = getAtlas(Constants.TEXTURE_ATLAS_GHOST);
+        TextureAtlas atlasBone = getAtlas(Constants.TEXTURE_ATLAS_BONE);
 
         // create game resource objects
         fonts = new AssetFonts();
@@ -121,6 +128,8 @@ public class Assets implements Disposable, AssetErrorListener {
         dino = new AssetDino(atlasDino);
         knight = new AssetKnight(atlasKnight);
         santa = new AssetSanta(atlasSanta);
+        ghost = new AssetGhost(atlasGhost);
+        bone = new AssetBone(atlasBone);
     }
 
     private TextureAtlas getAtlas(String path) {
@@ -155,12 +164,14 @@ public class Assets implements Disposable, AssetErrorListener {
         public final Texture background1;
         public final Texture background2;
         public final Texture background3;
+        public final Texture background4;
 
         public AssetTexture (AssetManager am) {
             background = am.get("images/bg.png", Texture.class);
             background1 = am.get("images/bg1.png", Texture.class);
             background2 = am.get("images/bg2.png", Texture.class);
             background3 = am.get("images/bg3.png", Texture.class);
+            background4 = am.get("images/bg4.png", Texture.class);
         }
 
     }
@@ -290,7 +301,7 @@ public class Assets implements Disposable, AssetErrorListener {
             animJump = new Animation(1.0f / 12.0f, regions);
             // Animation: Climb
             regions = atlas.findRegions("anim_climb");
-            animClimb = new Animation(1.0f / 30.0f, regions);
+            animClimb = new Animation(1.0f / 12.0f, regions);
             // Animation: Dead
             regions = atlas.findRegions("anim_dead");
             animDead = new Animation(1.0f / 30.0f, regions);
@@ -395,15 +406,33 @@ public class Assets implements Disposable, AssetErrorListener {
         public final TextureAtlas.AtlasRegion melee;
         public final TextureAtlas.AtlasRegion climb;
 
+        public final TextureAtlas.AtlasRegion upHover;
+        public final TextureAtlas.AtlasRegion downHover;
+        public final TextureAtlas.AtlasRegion leftHover;
+        public final TextureAtlas.AtlasRegion rightHover;
+        public final TextureAtlas.AtlasRegion attackThrowHover;
+        public final TextureAtlas.AtlasRegion jumpThrowHover;
+        public final TextureAtlas.AtlasRegion meleeHover;
+        public final TextureAtlas.AtlasRegion climbHover;
+
         public AssetJoystick (TextureAtlas atlas) {
-            up = atlas.findRegion("shadedDark26");
+            up = atlas.findRegion("shadedDark36");
             down = atlas.findRegion("shadedDark27");
             left = atlas.findRegion("shadedDark24");
             right = atlas.findRegion("shadedDark25");
             attackThrow = atlas.findRegion("shadedDark49");
             melee = atlas.findRegion("shadedDark48");
-            jumpThrow = atlas.findRegion("shadedDark36");
-            climb = atlas.findRegion("shadedDark37");
+            jumpThrow = atlas.findRegion("shadedDark37");
+            climb = atlas.findRegion("shadedDark28");
+
+            upHover = atlas.findRegion("shadedLight36");
+            downHover = atlas.findRegion("shadedLight27");
+            leftHover = atlas.findRegion("shadedLight24");
+            rightHover = atlas.findRegion("shadedLight25");
+            attackThrowHover = atlas.findRegion("shadedLight49");
+            meleeHover = atlas.findRegion("shadedLight48");
+            jumpThrowHover = atlas.findRegion("shadedLight37");
+            climbHover = atlas.findRegion("shadedLight28");
         }
 
     }
@@ -446,7 +475,7 @@ public class Assets implements Disposable, AssetErrorListener {
     }
 
     public class AssetRobot {
-
+        public final Animation animBullet;
         public final Animation animIdle;
         public final Animation animRun;
         public final Animation animShoot;
@@ -460,12 +489,15 @@ public class Assets implements Disposable, AssetErrorListener {
 
         public AssetRobot(TextureAtlas atlas) {
             Array<TextureAtlas.AtlasRegion> regions = null;
+            // Animation: Bullet
+            regions = atlas.findRegions("anim_bullet");
+            animBullet = new Animation(1.0f / 30.0f, regions, Animation.PlayMode.LOOP_PINGPONG);
             // Animation: Idle
             regions = atlas.findRegions("anim_idle");
-            animIdle = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
+            animIdle = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP_PINGPONG);
             // Animation: Run
             regions = atlas.findRegions("anim_run");
-            animRun = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
+            animRun = new Animation(1.0f / 12.0f, regions);
             // Animation: Melee
             regions = atlas.findRegions("anim_melee");
             animMelee = new Animation(1.0f / 12.0f, regions);
@@ -483,7 +515,7 @@ public class Assets implements Disposable, AssetErrorListener {
             animRunShoot = new Animation(1.0f / 12.0f, regions);
             // Animation: Shoot
             regions = atlas.findRegions("anim_shoot");
-            animShoot = new Animation(1.0f / 12.0f, regions);
+            animShoot = new Animation(1.0f / 6.0f, regions, Animation.PlayMode.LOOP_PINGPONG);
             // Animation: Dead
             regions = atlas.findRegions("anim_dead");
             animDead = new Animation(1.0f / 12.0f, regions);
@@ -510,7 +542,7 @@ public class Assets implements Disposable, AssetErrorListener {
             animIdle = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
             // Animation: Run
             regions = atlas.findRegions("anim_run");
-            animRun = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
+            animRun = new Animation(1.0f / 12.0f, regions);
             // Animation: Melee
             regions = atlas.findRegions("anim_melee");
             animMelee = new Animation(1.0f / 12.0f, regions);
@@ -546,7 +578,7 @@ public class Assets implements Disposable, AssetErrorListener {
             animIdle = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
             // Animation: Run
             regions = atlas.findRegions("anim_run");
-            animRun = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
+            animRun = new Animation(1.0f / 6.0f, regions, Animation.PlayMode.LOOP);
             // Animation: Walk
             regions = atlas.findRegions("anim_walk");
             animWalk = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
@@ -626,6 +658,52 @@ public class Assets implements Disposable, AssetErrorListener {
             // Animation: Slide
             regions = atlas.findRegions("anim_slide");
             animSlide = new Animation(1.0f / 30.0f, regions);
+        }
+
+    }
+
+    public class AssetGhost {
+
+        public final Animation animIdle;
+        public final Animation animRun;
+        public final Animation animJump;
+        public final Animation animDead;
+
+        public AssetGhost(TextureAtlas atlas) {
+            Array<TextureAtlas.AtlasRegion> regions = null;
+            // Animation: Idle
+            regions = atlas.findRegions("anim_idle");
+            animIdle = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
+            // Animation: Run
+            regions = atlas.findRegions("anim_run");
+            animRun = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
+            // Animation: Jump
+            regions = atlas.findRegions("anim_jump");
+            animJump = new Animation(1.0f / 12.0f, regions);
+            // Animation: Dead
+            regions = atlas.findRegions("anim_dead");
+            animDead = new Animation(1.0f / 12.0f, regions);
+        }
+
+    }
+
+    public class AssetBone {
+
+        public final Animation animWalk;
+        public final Animation animAttack;
+        public final Animation animDead;
+
+        public AssetBone(TextureAtlas atlas) {
+            Array<TextureAtlas.AtlasRegion> regions = null;
+            // Animation: Walk
+            regions = atlas.findRegions("anim_walk");
+            animWalk = new Animation(1.0f / 12.0f, regions, Animation.PlayMode.LOOP);
+            // Animation: Jump
+            regions = atlas.findRegions("anim_attack");
+            animAttack = new Animation(1.0f / 12.0f, regions);
+            // Animation: Dead
+            regions = atlas.findRegions("anim_dead");
+            animDead = new Animation(1.0f / 12.0f, regions);
         }
 
     }

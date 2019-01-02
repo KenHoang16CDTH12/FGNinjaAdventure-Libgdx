@@ -34,13 +34,8 @@ public class Zombie extends Enemy implements Pool.Poolable {
     private Animation zombieDead;
     private Animation zombieAttack;
 
-    private float speed;
-
     private boolean isWalk;
-    private boolean isDead;
     private boolean isAttack;
-
-    private float timeDelayDie = 3;
 
     public Zombie(World world, ScoreIndicator scoreIndicator) {
         super(world, scoreIndicator);
@@ -82,45 +77,14 @@ public class Zombie extends Enemy implements Pool.Poolable {
 
 
     public void update(float dt) {
-        if (destroyed) {
-            return;
+        if (isWalk) {
+            running();
         }
-        if (isDead) {
-            timeDelayDie -= dt;
-            if (timeDelayDie < 0) {
-                queueDestroy();
-                // Sound
-                ValueManager.instance.score += score();
-                scoreIndicator.addScoreItem(getX(), getY(), score());
-            }
-        }
-        if (toBeDestroyed) {
-            world.destroyBody(body);
-            setBounds(0, 0, 0, 0);
-            destroyed = true;
-            return;
-        }
-        if (!body.isActive()) {
-            return;
-        }
-        setBoundForRegion();
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        setRegion(getFrame(dt));
+        super.update(dt);
     }
 
-    private void walking() {
-        checkMovingDirection();
-        float velocityY = body.getLinearVelocity().y;
-        if (runningRight) {
-            body.setLinearVelocity(new Vector2(speed, velocityY));
-        }
-        else {
-            body.setLinearVelocity(new Vector2(-speed, velocityY));
-        }
-    }
-
-
-    private void setBoundForRegion() {
+    @Override
+    protected void setBoundForRegion() {
         currentState = getState();
         switch (currentState) {
             case WALK:
@@ -143,7 +107,8 @@ public class Zombie extends Enemy implements Pool.Poolable {
         }
     }
 
-    private TextureRegion getFrame(float dt) {
+    @Override
+    protected TextureRegion getFrame(float dt) {
         currentState = getState();
         TextureRegion region;
         //depending on the state, get corresponding animation KeyFrame
@@ -171,10 +136,6 @@ public class Zombie extends Enemy implements Pool.Poolable {
         else if ((body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX()) {
             region.flip(true, false);
             runningRight = true;
-        }
-
-        if (isWalk && !isAttack) {
-            walking();
         }
 
         //if the current state is the same as the previous state increase the state timer.
@@ -207,7 +168,7 @@ public class Zombie extends Enemy implements Pool.Poolable {
                 posy,
                 width,
                 height,
-                BodyFactory.ZOMBIE_SENSOR,
+                BodyFactory.ENEMY_DISABLE_PLAYER,
                 BodyDef.BodyType.DynamicBody,
                 this
         );
@@ -217,14 +178,14 @@ public class Zombie extends Enemy implements Pool.Poolable {
                 10 / PPM,
                 new Vector2(0, (-height - 70) / PPM),
                 0,
-                BodyFactory.ZOMBIE_SENSOR,
+                BodyFactory.ENEMY_SENSOR,
                 this
         );
         // create keep shape
         bodyFactory.makeEdgeSensor(body,
                 new Vector2(0, (-height - 70) / PPM),
                 new Vector2(6.8f / PPM / 6, 6.8f / PPM * 3),
-                BodyFactory.ZOMBIE,
+                BodyFactory.ENEMY,
                 this
         );
     }
@@ -239,7 +200,7 @@ public class Zombie extends Enemy implements Pool.Poolable {
 
     @Override
     public int score() {
-        return 200;
+        return 100;
     }
 
     @Override
@@ -250,7 +211,8 @@ public class Zombie extends Enemy implements Pool.Poolable {
         becomeDead();
     }
 
-    public void zombieAttack(Player player) {
+    @Override
+    public void beginAttack(Player player) {
         setRegion((TextureRegion) zombieAttack.getKeyFrame(stateTimer));
         player.playerDie();
         isAttack = true;
@@ -258,10 +220,10 @@ public class Zombie extends Enemy implements Pool.Poolable {
         body.getLinearVelocity().x = 0;
     }
 
-    public void zombieStopAttack(Player player) {
+    @Override
+    public void endAttack(Player player) {
         setRegion((TextureRegion) zombieIdle.getKeyFrame(stateTimer));
         isWalk = true;
         isAttack = false;
     }
-
 }

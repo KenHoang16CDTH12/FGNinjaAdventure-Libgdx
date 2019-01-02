@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
 import com.fgdev.game.entitiles.bullets.Kunai;
+import com.fgdev.game.entitiles.bullets.SpawningBullet;
 import com.fgdev.game.utils.*;
 import com.fgdev.game.Constants;
+
+import java.util.LinkedList;
 
 import static com.fgdev.game.Constants.*;
 
@@ -60,19 +62,12 @@ public class Player extends Sprite {
 
     private final float JUMP_TIME_MAX = 0.3f;
 
-    // Shoot
-    // array containing the active kunaies.
-    private final Array<Kunai> activeKunaies = new Array<Kunai>();
-
-    // kunaies pool.
-    private final Pool<Kunai> kunaiPool = new Pool<Kunai>() {
-        @Override
-        protected Kunai newObject() {
-            return new Kunai(getWorld());
-        }
-    };
+    private Array<Kunai> kunaies;
+    private LinkedList<SpawningBullet> bulletSpawnQueue;
 
     private boolean isOnGround;
+
+    private boolean isOnLadder;
 
     public Player(World world) {
         this.world = world;
@@ -90,7 +85,11 @@ public class Player extends Sprite {
         canThrow = true;
         isOnGround = false;
         runningRight = true;
+        isOnLadder = false;
         isGirl = GamePreferences.instance.isGirl;
+        // for spawning bullets
+        kunaies = new Array<Kunai>();
+        bulletSpawnQueue = new LinkedList<SpawningBullet>();
         // Power-ups
         hasFeatherPowerup = false;
         timeLeftFeatherPowerup = 0;
@@ -124,25 +123,30 @@ public class Player extends Sprite {
     }
 
     public void update(float dt) {
-        setBoundForRegion();
-        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2 - 0.1f);
-        setRegion(getFrame(dt));
         if (timeTodefinePlayerAttackRight)
             definePlayerAttackRight();
         if (timeTodefinePlayerAttackLeft)
             definePlayerAttackLeft();
         if (timeToRedefinePlayer)
             reDefinePlayer();
-        Kunai item;
-        int len = activeKunaies.size;
-        for (int i = len; --i >= 0;) {
-            item = activeKunaies.get(i);
-            item.update(dt);
-            if (!item.isAlive()) {
-                activeKunaies.removeIndex(i);
-                kunaiPool.free(item);
+
+        // spawn
+        handleSpawningBullet();
+
+        // update bullets
+        for (Kunai kunai : kunaies) {
+            kunai.update(dt);
+        }
+        // clean
+        for (int i = 0; i < kunaies.size; i++) {
+            if (!kunaies.get(i).isAlive()) {
+                kunaies.removeIndex(i);
             }
         }
+
+        setBoundForRegion();
+        setRegion(getFrame(dt));
+        setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2 - 0.1f);
     }
 
     private void setBoundForRegion() {
@@ -208,7 +212,7 @@ public class Player extends Sprite {
                 region = (TextureRegion) playerJump.getKeyFrame(stateTimer, true);
                 break;
             case CLIMB:
-                region = (TextureRegion) playerClimb.getKeyFrame(stateTimer);
+                region = (TextureRegion) playerClimb.getKeyFrame(stateTimer, true);
                 if (playerClimb.isAnimationFinished(stateTimer))
                     isClimb = false;
                 break;
@@ -227,10 +231,10 @@ public class Player extends Sprite {
                 region = (TextureRegion) playerJumpThrow.getKeyFrame(stateTimer);
                 if (playerJumpThrow.isAnimationFinished(stateTimer)) {
                     if (!canThrow && !world.isLocked()) {
+                        float x = runningRight ? 1f : -1f;
+                        float y = -0.1f;
                         // if you want to spawn a new bullet:
-                        Kunai item = kunaiPool.obtain();
-                        item.init( body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false);
-                        activeKunaies.add(item);
+                        addSpawnBullet(body.getPosition().x + x, body.getPosition().y + y, runningRight ? true : false);
                     }
                     canThrow = true;
                 }
@@ -364,6 +368,11 @@ public class Player extends Sprite {
 
     public void climb() {
         isClimb = true;
+        if (isOnLadder) {
+            body.applyLinearImpulse(new Vector2(0, 0.2f), body.getWorldCenter(), true);
+        } else {
+            body.applyLinearImpulse(new Vector2(0, 0), body.getWorldCenter(), true);
+        }
     }
 
     public void jumpThrow() {
@@ -386,11 +395,10 @@ public class Player extends Sprite {
 
     public void attackThrow() {
         if (currentState != State.JUMP_THROW && currentState != State.JUMP && currentState != State.GLIDE && currentState != State.ATTACK && canThrow && !world.isLocked()) {
-            setRegion((TextureRegion) playerThrow.getKeyFrame(stateTimer));
+            float x = runningRight ? 1f : -1f;
+            float y = -0.1f;
             // if you want to spawn a new bullet:
-            Kunai item = kunaiPool.obtain();
-            item.init( body.getPosition().x - getWidth() / 2 + 1.25f, body.getPosition().y - getHeight() / 2 + 0.65f, runningRight ? true : false);
-            activeKunaies.add(item);
+            addSpawnBullet(body.getPosition().x + x, body.getPosition().y + y, runningRight ? true : false);
             isThrow = true;
             canThrow = false;
         }
@@ -445,7 +453,7 @@ public class Player extends Sprite {
     }
 
     private void definePlayer() {
-        makeBoxPlayerBody(100 / PPM, 500 / PPM);
+        makeBoxPlayerBody(ValueManager.instance.posX, ValueManager.instance.posY);
     }
 
     private void reDefinePlayer() {
@@ -507,13 +515,22 @@ public class Player extends Sprite {
     @Override
     public void draw(Batch batch) {
         super.draw(batch);
-        Kunai item;
-        int len = activeKunaies.size;
-        for (int i = len; --i >= 0;) {
-            item = activeKunaies.get(i);
-            if (item.isAlive()) {
-                item.draw(batch);
-            }
+
+        // draw bullets
+        for (Kunai kunai : kunaies) {
+            kunai.draw(batch);
+        }
+    }
+
+
+    public void addSpawnBullet(float x, float y, boolean movingRight) {
+        bulletSpawnQueue.add(new SpawningBullet(x, y, movingRight));
+    }
+
+    public void handleSpawningBullet() {
+        if (bulletSpawnQueue.size() > 0) {
+            SpawningBullet spawningBullet = bulletSpawnQueue.poll();
+            kunaies.add(new Kunai(getWorld(), spawningBullet.x, spawningBullet.y, spawningBullet.movingRight));
         }
     }
 
@@ -537,4 +554,7 @@ public class Player extends Sprite {
         return isDead;
     }
 
+    public void setOnLadder(boolean onLadder) {
+        isOnLadder = onLadder;
+    }
 }

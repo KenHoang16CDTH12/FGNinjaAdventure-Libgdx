@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="180" height="10" tilewidth="128" tileheight="128" infinite="0" nextlayerid="41" nextobjectid="800">
+ <tileset firstgid="1" name="tile_night" tilewidth="128" tileheight="128" spacing="2" margin="2" tilecount="21" columns="7">
+  <image source="tile_night.png" width="1024" height="512"/>
+ </tileset>
+ <tileset firstgid="22" name="tile_machine" tilewidth="128" tileheight="128" spacing="2" margin="2" tilecount="45" columns="15">
+  <image source="tile_machine.png" width="2048" height="512"/>
+ </tileset>
+ <tileset firstgid="67" name="tile_water" tilewidth="128" tileheight="128" spacing="2" margin="2" tilecount="15" columns="15">
+  <image source="tile_water.png" width="2048" height="256"/>
+ </tileset>
+ <tileset firstgid="82" name="object" tilewidth="128" tileheight="128" spacing="2" margin="2" tilecount="21" columns="7">
+  <image source="object.png" width="1024" height="512"/>
+ </tileset>
+ <layer id="39" name="background" width="180" height="10">
+  <data encoding="base64" compression="zlib">
+   eJztl+sOgjAMhRdRE28k3n7wPL7/O1kSljTNVgpsHCf7kvMHpceWQxedq1QqKTmR7qQd+odUNoHPm89cN0he73mTjga1rP6Z9CA1mfuo/D+x/PG8HUj7QTfD9alsJc+hWfs5890gtca5hfYvDTkvPiNLnnkWWuV7aLTMavgZhLTGe472Lw05rybwWYq5hfZM6v0yN7Ma6Dyh/XMRO3emZoLXuZCebjzPV9JroW/oucx5Hjkyq4HOE9o/F7G+pvakzSeW51y+sRprZ1YDnSe0fyrG9qi1J2udlHmWZ0nMV+79X/x/g84T2j8VY3tUy0THZK3DZ2S5txE+SzwtNVHSeuln/8ksbf+UlOcvy+4fAg==
+  </data>
+ </layer>
+ <layer id="40" name="foreground" width="180" height="10">
+  <data encoding="base64" compression="zlib">
+   eJzt17EKgCAUBVCJGhoa+rnGIPr/f8jBdtFEknPgjvLecBUMAah19V4APnL2XuBnet/9u/P8ErkdW2P2lKlw1lF4DnLldmyJmVO2dutAFW8mI9FnRvD+NfQZAGjlAV6ABDg=
+  </data>
+ </layer>
+ <objectgroup id="3" name="grounds">
+  <object id="2" x="0" y="1024.67" width="510" height="253.333"/>
+  <object id="3" x="1400" y="1153.33" width="516" height="123.333"/>
+  <object id="4" x="2300.67" y="1024" width="516" height="256"/>
+  <object id="5" x="2817.33" y="768" width="510.667" height="514"/>
+  <object id="6" x="3326" y="510.667" width="641.333" height="771.333"/>
+  <object id="74" x="510.333" y="769.333" width="894" height="508"/>
+  <object id="75" x="4" y="385.333" width="256" height="70.6667"/>
+  <object id="80" x="383.879" y="385.333" width="512.121" height="71.3333"/>
+  <object id="87" x="1150.67" y="256" width="514.667" height="254"/>
+  <object id="91" x="1536" y="385.333" width="514.667" height="254.667"/>
+  <object id="93" x="1921.33" y="257.333" width="512" height="254.667"/>
+  <object id="95" x="2561.33" y="256" width="1154.67" height="54"/>
+  <object id="99" x="3836" y="257.333" width="136" height="51.3333"/>
+  <object id="105" x="4224.67" y="128.667" width="384.667" height="1151.33"/>
+  <object id="374" x="4610" y="766" width="644" height="516"/>
+  <object id="378" x="5376" y="510" width="515" height="53"/>
+  <object id="384" x="6016" y="1022" width="640" height="262"/>
+  <object id="385" x="6654" y="636" width="770" height="656"/>
+  <object id="387" x="7422" y="1022" width="518" height="262"/>
+  <object id="389" x="8066.67" y="894.667" width="765.333" height="53.3333"/>
+  <object id="394" x="8961.33" y="771.334" width="765.333" height="51.3333"/>
+  <object id="399" x="9861.33" y="640.667" width="765.333" height="51.3333"/>
+  <object id="404" x="10753.3" y="514" width="765.333" height="51.3333"/>
+  <object id="409" x="11649.3" y="383.334" width="765.333" height="47.3333"/>
+  <object id="414" x="12540" y="378" width="1028" height="900"/>
+  <object id="428" x="16636" y="380" width="1024" height="908"/>
+ </objectgroup>
+ <objectgroup id="9" name="hidden_walls">
+  <object id="38" x="512.426" y="612.848" width="8.84845" height="154.546"/>
+  <object id="113" x="1396.91" y="614.727" width="8.84845" height="154.546"/>
+  <object id="114" x="2.24244" y="229.394" width="8.84845" height="154.546"/>
+  <object id="115" x="886.242" y="228.06" width="8.84845" height="154.546"/>
+  <object id="116" x="1152.91" y="100.06" width="8.84845" height="154.546"/>
+  <object id="117" x="1656.91" y="100.06" width="8.84845" height="154.546"/>
+  <object id="122" x="3714.24" y="100.06" width="8.84845" height="154.546"/>
+  <object id="123" x="3328.91" y="353.394" width="8.84845" height="154.546"/>
+  <object id="124" x="3959.58" y="353.394" width="8.84845" height="154.546"/>
+  <object id="125" x="1907.7" y="995.454" width="8.84845" height="154.546"/>
+  <object id="126" x="1925.88" y="104.545" width="8.84845" height="154.546"/>
+  <object id="127" x="2424.91" y="101.394" width="8.84845" height="154.546"/>
+  <object id="128" x="2563.58" y="98.727" width="8.84845" height="154.546"/>
+  <object id="130" x="2819.58" y="612.06" width="8.84845" height="154.546"/>
+  <object id="131" x="2302.24" y="866.727" width="8.84845" height="154.546"/>
+  <object id="430" x="5244.06" y="610.606" width="8.84845" height="154.546"/>
+  <object id="431" x="5380.42" y="346.969" width="8.84845" height="154.546"/>
+  <object id="432" x="5883.45" y="350" width="8.84845" height="154.546"/>
+  <object id="435" x="6659.21" y="477.272" width="8.84845" height="154.546"/>
+  <object id="437" x="7413.76" y="474.242" width="8.84845" height="154.546"/>
+  <object id="438" x="8068.3" y="737.879" width="8.84845" height="154.546"/>
+  <object id="439" x="8828.91" y="737.879" width="8.84845" height="154.546"/>
+  <object id="440" x="8965.27" y="613.636" width="8.84845" height="154.546"/>
+  <object id="441" x="9716.79" y="610.606" width="8.84845" height="154.546"/>
+  <object id="442" x="9865.27" y="477.272" width="8.84845" height="154.546"/>
+  <object id="443" x="10619.8" y="474.242" width="8.84845" height="154.546"/>
+  <object id="444" x="10756.2" y="356.06" width="8.84845" height="154.546"/>
+  <object id="446" x="11509.7" y="353.03" width="8.84845" height="154.546"/>
+  <object id="447" x="11656.2" y="219.697" width="8.84845" height="154.546"/>
+  <object id="448" x="12401.6" y="219.697" width="8.84845" height="154.546"/>
+  <object id="450" x="12550.1" y="228.788" width="8.84845" height="154.546"/>
+  <object id="451" x="13428.9" y="225.757" width="8.84845" height="154.546"/>
+ </objectgroup>
+ <objectgroup id="23" name="ladders">
+  <object id="576" x="262" y="386" width="115" height="639"/>
+  <object id="578" x="3720.5" y="257" width="113" height="252"/>
+ </objectgroup>
+ <objectgroup id="4" name="spikes">
+  <object id="21" x="1918" y="1228" width="383" height="52"/>
+  <object id="110" x="3971.5" y="1229" width="253" height="52"/>
+  <object id="111" x="1670.5" y="340" width="249" height="46"/>
+  <object id="376" x="5252" y="1228" width="769.333" height="53.3333"/>
+  <object id="571" x="7940" y="1240" width="4600" height="40"/>
+ </objectgroup>
+ <objectgroup id="5" name="coins" offsetx="-10" offsety="-2">
+  <object id="133" x="1901.33" y="873.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="135" x="1986" y="814" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="136" x="2090" y="772" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="137" x="2188.67" y="764.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="138" x="2278" y="803.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="158" x="1602" y="131.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="159" x="1671.67" y="79.0003" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="160" x="1743.67" y="31.0003" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="161" x="1812.34" y="30.6673" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="162" x="1879.67" y="75.3333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="163" x="1940.67" y="131.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="208" x="763" y="277.334" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="209" x="794" y="212.334" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="210" x="844.67" y="153.001" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="211" x="912" y="100.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="212" x="982" y="69.0005" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="213" x="1047.33" y="91.6665" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="214" x="1099" y="138.334" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="215" x="1145" y="196" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="302" x="14245.4" y="293.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="303" x="14367.9" y="292.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="304" x="14498.7" y="292.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="305" x="14630" y="293" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="306" x="14760.7" y="293" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="307" x="14887.3" y="291.666" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="308" x="15018.1" y="291.666" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="309" x="15140.6" y="291" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="315" x="15272.8" y="292.015" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="316" x="15403.5" y="292.015" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="317" x="15530.1" y="290.681" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="318" x="15660.9" y="290.681" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="319" x="15783.4" y="290.015" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="328" x="14248.3" y="433.106" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="329" x="14379.1" y="433.106" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="330" x="14501.6" y="432.44" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="331" x="14632.4" y="432.44" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="332" x="14763.7" y="432.773" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="333" x="14894.4" y="432.773" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="334" x="15021" y="431.439" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="335" x="15151.8" y="431.439" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="336" x="15274.3" y="430.773" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="348" x="15400" y="422.318" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="349" x="15530.7" y="422.318" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="350" x="15657.3" y="420.984" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="351" x="15788.1" y="420.984" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="521" x="7868" y="945.167" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="522" x="7915.67" y="858.834" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="523" x="7978" y="781.5" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="524" x="8060" y="731.833" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="525" x="8147.33" y="751.499" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="526" x="8209" y="823.167" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="528" x="8729.5" y="810.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="529" x="8777.17" y="724.334" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="530" x="8839.5" y="647" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="531" x="8921.5" y="597.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="532" x="9008.83" y="616.999" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="533" x="9070.5" y="688.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="534" x="9607.5" y="682.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="535" x="9655.17" y="596.334" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="536" x="9717.5" y="519" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="537" x="9799.5" y="469.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="538" x="9886.83" y="488.999" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="539" x="9948.5" y="560.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="540" x="10505.5" y="556.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="541" x="10553.2" y="470.334" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="542" x="10615.5" y="393" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="543" x="10697.5" y="343.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="544" x="10784.8" y="362.999" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="545" x="10846.5" y="434.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="546" x="11415.5" y="444.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="547" x="11463.2" y="358.334" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="548" x="11525.5" y="281" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="549" x="11607.5" y="231.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="550" x="11694.8" y="250.999" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="551" x="11756.5" y="322.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="552" x="12281.5" y="312.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="553" x="12347.2" y="248.334" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="554" x="12417.5" y="205" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="555" x="12499.5" y="185.333" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="556" x="12580.8" y="198.999" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="557" x="12652.5" y="258.667" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="558" x="12682" y="324" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="559" x="5444.99" y="195.5" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="560" x="5515.66" y="196.167" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="561" x="5587.66" y="196.167" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="562" x="5656.34" y="196.834" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="563" x="5723.66" y="197.5" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="564" x="5793.66" y="196.834" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="793" x="982" y="69.0005" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="794" x="2338.66" y="188.166" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="795" x="2396.34" y="105.833" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="796" x="2486.34" y="73.8332" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="797" x="2575.01" y="117.5" width="56" height="56">
+   <ellipse/>
+  </object>
+  <object id="798" x="2622.34" y="186.166" width="56" height="56">
+   <ellipse/>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="feathers">
+  <object id="217" x="3993.33" y="790.303" width="80" height="80"/>
+  <object id="218" x="4117.58" y="790.303" width="80" height="80"/>
+  <object id="239" x="13596" y="290" width="80" height="80"/>
+  <object id="249" x="13846" y="558" width="80" height="80"/>
+  <object id="370" x="16415" y="406.121" width="80" height="80"/>
+  <object id="371" x="16276" y="540" width="80" height="80"/>
+  <object id="373" x="13726" y="416" width="80" height="80"/>
+ </objectgroup>
+ <objectgroup id="7" name="crates">
+  <object id="219" x="1819.67" y="1057" width="94" height="94"/>
+  <object id="220" x="1723.67" y="1057" width="94" height="94"/>
+  <object id="222" x="1819.67" y="959.667" width="94" height="94"/>
+  <object id="223" x="3326.33" y="417" width="94" height="94"/>
+  <object id="227" x="4516.33" y="33.6667" width="94" height="94"/>
+  <object id="484" x="6558.33" y="927.667" width="94" height="94"/>
+  <object id="485" x="6463.67" y="927.667" width="94" height="94"/>
+  <object id="487" x="6558.33" y="831.667" width="94" height="94"/>
+  <object id="488" x="7426.33" y="929" width="94" height="94"/>
+  <object id="489" x="12752.3" y="284.333" width="94" height="94"/>
+ </objectgroup>
+ <objectgroup id="10" name="signs">
+  <object id="108" x="3846" y="142" width="110" height="114">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="417" x="17539.3" y="263.333" width="120" height="118.667">
+   <properties>
+    <property name="level" type="int" value="1"/>
+    <property name="type" type="int" value="2"/>
+   </properties>
+  </object>
+  <object id="429" x="13444" y="260" width="124" height="120">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="572" x="6" y="904" width="120" height="120">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="11" name="zombies">
+  <object id="55" x="794.42" y="286.667" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="231" x="925" y="673" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="232" x="1361" y="161" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="233" x="2517" y="933" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="234" x="3025" y="677" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="236" x="3585" y="421" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="237" x="3093" y="161" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="238" x="2141" y="169" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="499" x="5159" y="677" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="1"/>
+   </properties>
+  </object>
+  <object id="500" x="8411" y="805" width="70" height="86">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="12" name="robots">
+  <object id="501" x="6990" y="498" width="114" height="136">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="502" x="10175" y="504" width="114" height="136">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="13" name="adventure_girls">
+  <object id="503" x="9300" y="626" width="90" height="142">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+  <object id="504" x="11089" y="367" width="90" height="142">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="14" name="dinos"/>
+ <objectgroup id="15" name="knights"/>
+ <objectgroup id="16" name="santas">
+  <object id="497" x="5578" y="434" width="103" height="71">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="17" name="ghosts">
+  <object id="505" x="11990" y="258" width="94" height="124">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="18" name="bones">
+  <object id="506" x="12980" y="246" width="104" height="136">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

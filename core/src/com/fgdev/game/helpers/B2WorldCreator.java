@@ -7,9 +7,13 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.fgdev.game.entitiles.bullets.Kunai;
 import com.fgdev.game.entitiles.enemies.*;
-import com.fgdev.game.entitiles.tiles.*;
+import com.fgdev.game.entitiles.tiles.box.BoxObject;
+import com.fgdev.game.entitiles.tiles.box.Crate;
+import com.fgdev.game.entitiles.tiles.item.Coin;
+import com.fgdev.game.entitiles.tiles.item.Feather;
+import com.fgdev.game.entitiles.tiles.item.ItemObject;
+import com.fgdev.game.entitiles.tiles.platform.*;
 
 public class B2WorldCreator {
     private World world;
@@ -35,6 +39,20 @@ public class B2WorldCreator {
         @Override
         protected HiddenWall newObject() {
             return new HiddenWall(getWorld());
+        }
+    };
+    private final Array<Spike> activeSpikes = new Array<Spike>();
+    private final Pool<Spike> spikePool = new Pool<Spike>() {
+        @Override
+        protected Spike newObject() {
+            return new Spike(getWorld());
+        }
+    };
+    private final Array<Ladder> activeLadders = new Array<Ladder>();
+    private final Pool<Ladder> ladderPool = new Pool<Ladder>() {
+        @Override
+        protected Ladder newObject() {
+            return new Ladder(getWorld());
         }
     };
     // Items
@@ -109,6 +127,22 @@ public class B2WorldCreator {
         }
     };
 
+    private final Array<Ghost> activeGhosts = new Array<Ghost>();
+    private final Pool<Ghost> ghostPool = new Pool<Ghost>() {
+        @Override
+        protected Ghost newObject() {
+            return new Ghost(getWorld(), getScoreIndicator());
+        }
+    };
+
+    private final Array<Bone> activeBones = new Array<Bone>();
+    private final Pool<Bone> bonePool = new Pool<Bone>() {
+        @Override
+        protected Bone newObject() {
+            return new Bone(getWorld(), getScoreIndicator());
+        }
+    };
+
     public B2WorldCreator(World world, Map map, ScoreIndicator scoreIndicator) {
         this.world = world;
         this.map = map;
@@ -133,8 +167,26 @@ public class B2WorldCreator {
         for (MapObject object: map.getLayers().get("signs").getObjects().getByType(RectangleMapObject.class)) {
             // if you want to spawn a new:
             Sign item = signPool.obtain();
-            item.init(object);
+            int type = object.getProperties().get("type", Integer.class) != null ? object.getProperties().get("type", Integer.class) : Sign.DEFAULT_SIGN;
+            int level = object.getProperties().get("level", Integer.class) != null ? object.getProperties().get("level", Integer.class) : 1;
+            item.init(object, type, level);
             activeSigns.add(item);
+        }
+
+        //create spikes bodies/fixtures
+        for (MapObject object: map.getLayers().get("spikes").getObjects().getByType(RectangleMapObject.class)) {
+            // if you want to spawn a new:
+            Spike item = spikePool.obtain();
+            item.init(object);
+            activeSpikes.add(item);
+        }
+
+        //create ladders bodies/fixtures
+        for (MapObject object: map.getLayers().get("ladders").getObjects().getByType(RectangleMapObject.class)) {
+            // if you want to spawn a new:
+            Ladder item = ladderPool.obtain();
+            item.init(object);
+            activeLadders.add(item);
         }
 
         //create crates bodies/fixtures
@@ -201,13 +253,63 @@ public class B2WorldCreator {
             activeKnights.add(item);
         }
 
-        //create knights bodies/fixtures
+        //create santas bodies/fixtures
         for (MapObject object: map.getLayers().get("santas").getObjects().getByType(RectangleMapObject.class)) {
             // if you want to spawn a new:
             Santa item = santaPool.obtain();
             item.init(object, object.getProperties().get("type", Integer.class));
             activeSantas.add(item);
         }
+
+        //create ghosts bodies/fixtures
+        for (MapObject object: map.getLayers().get("ghosts").getObjects().getByType(RectangleMapObject.class)) {
+            // if you want to spawn a new:
+            Ghost item = ghostPool.obtain();
+            item.init(object, object.getProperties().get("type", Integer.class));
+            activeGhosts.add(item);
+        }
+
+        //create bones bodies/fixtures
+        for (MapObject object: map.getLayers().get("bones").getObjects().getByType(RectangleMapObject.class)) {
+            // if you want to spawn a new:
+            Bone item = bonePool.obtain();
+            item.init(object, object.getProperties().get("type", Integer.class));
+            activeBones.add(item);
+        }
+    }
+
+    public Array<BoxObject> getActiveBoxObjects() {
+        Array<BoxObject> boxObjects = new Array<BoxObject>();
+        boxObjects.addAll(activeCrates);
+        return boxObjects;
+    }
+
+    public Array<ItemObject> getActiveItemObjects() {
+        Array<ItemObject> itemObjects = new Array<ItemObject>();
+        itemObjects.addAll(activeCoins);
+        itemObjects.addAll(activeFeathers);
+        return itemObjects;
+    }
+
+    public Array<Enemy> getActiveEnemies() {
+        Array<Enemy> enemies = new Array<Enemy>();
+        enemies.addAll(activeZombies);
+        enemies.addAll(activeRobots);
+        enemies.addAll(activeAdventureGirls);
+        enemies.addAll(activeDinos);
+        enemies.addAll(activeKnights);
+        enemies.addAll(activeSantas);
+        enemies.addAll(activeGhosts);
+        enemies.addAll(activeBones);
+        return enemies;
+    }
+
+    public Array<Spike> getActiveSpikes() {
+        return activeSpikes;
+    }
+
+    public Pool<Spike> getSpikePool() {
+        return spikePool;
     }
 
     public Array<HiddenWall> getActiveHiddenWalls() {
@@ -262,40 +364,36 @@ public class B2WorldCreator {
         return activeZombies;
     }
 
-    public Array<Santa> getActiveSantas() {
-        return activeSantas;
-    }
-
-    public Array<Robot> getActiveRobots() {
-        return activeRobots;
-    }
-
-    public Array<Knight> getActiveKnights() {
-        return activeKnights;
-    }
-
-    public Array<Dino> getActiveDinos() {
-        return activeDinos;
-    }
-
-    public Pool<AdventureGirl> getAdventureGirlPool() {
-        return adventureGirlPool;
-    }
-
     public Pool<Zombie> getZombiePool() {
         return zombiePool;
+    }
+
+    public Array<Santa> getActiveSantas() {
+        return activeSantas;
     }
 
     public Pool<Santa> getSantaPool() {
         return santaPool;
     }
 
+    public Array<Robot> getActiveRobots() {
+        return activeRobots;
+    }
+
     public Pool<Robot> getRobotPool() {
         return robotPool;
     }
 
+    public Array<Knight> getActiveKnights() {
+        return activeKnights;
+    }
+
     public Pool<Knight> getKnightPool() {
         return knightPool;
+    }
+
+    public Array<Dino> getActiveDinos() {
+        return activeDinos;
     }
 
     public Pool<Dino> getDinoPool() {
@@ -304,6 +402,26 @@ public class B2WorldCreator {
 
     public Array<AdventureGirl> getActiveAdventureGirls() {
         return activeAdventureGirls;
+    }
+
+    public Pool<AdventureGirl> getAdventureGirlPool() {
+        return adventureGirlPool;
+    }
+
+    public Array<Ghost> getActiveGhosts() {
+        return activeGhosts;
+    }
+
+    public Pool<Ghost> getGhostPool() {
+        return ghostPool;
+    }
+
+    public Array<Bone> getActiveBones() {
+        return activeBones;
+    }
+
+    public Pool<Bone> getBonePool() {
+        return bonePool;
     }
 
     public World getWorld() {

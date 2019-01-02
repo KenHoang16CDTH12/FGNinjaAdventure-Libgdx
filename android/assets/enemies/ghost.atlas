@@ -1,0 +1,174 @@
+
+ghost.png
+size: 2048,128
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+anim_dead
+  rotate: false
+  xy: 2, 2
+  size: 106, 102
+  orig: 106, 102
+  offset: 0, 0
+  index: 5
+anim_dead
+  rotate: false
+  xy: 110, 2
+  size: 105, 102
+  orig: 105, 102
+  offset: 0, 0
+  index: 1
+anim_dead
+  rotate: false
+  xy: 217, 2
+  size: 105, 102
+  orig: 105, 102
+  offset: 0, 0
+  index: 2
+anim_dead
+  rotate: false
+  xy: 324, 2
+  size: 105, 102
+  orig: 105, 102
+  offset: 0, 0
+  index: 3
+anim_dead
+  rotate: false
+  xy: 431, 2
+  size: 105, 102
+  orig: 105, 102
+  offset: 0, 0
+  index: 4
+anim_dead
+  rotate: false
+  xy: 538, 2
+  size: 105, 102
+  orig: 105, 102
+  offset: 0, 0
+  index: 6
+anim_idle
+  rotate: false
+  xy: 1443, 16
+  size: 58, 88
+  orig: 58, 88
+  offset: 0, 0
+  index: 1
+anim_idle
+  rotate: false
+  xy: 1503, 16
+  size: 58, 88
+  orig: 58, 88
+  offset: 0, 0
+  index: 2
+anim_idle
+  rotate: false
+  xy: 1563, 16
+  size: 58, 88
+  orig: 58, 88
+  offset: 0, 0
+  index: 3
+anim_idle
+  rotate: false
+  xy: 1623, 16
+  size: 58, 88
+  orig: 58, 88
+  offset: 0, 0
+  index: 4
+anim_idle
+  rotate: false
+  xy: 1683, 16
+  size: 58, 88
+  orig: 58, 88
+  offset: 0, 0
+  index: 5
+anim_idle
+  rotate: false
+  xy: 1743, 16
+  size: 58, 88
+  orig: 58, 88
+  offset: 0, 0
+  index: 6
+anim_jump
+  rotate: false
+  xy: 645, 10
+  size: 69, 94
+  orig: 69, 94
+  offset: 0, 0
+  index: 1
+anim_jump
+  rotate: false
+  xy: 716, 10
+  size: 69, 94
+  orig: 69, 94
+  offset: 0, 0
+  index: 2
+anim_jump
+  rotate: false
+  xy: 787, 10
+  size: 69, 94
+  orig: 69, 94
+  offset: 0, 0
+  index: 3
+anim_jump
+  rotate: false
+  xy: 858, 10
+  size: 69, 94
+  orig: 69, 94
+  offset: 0, 0
+  index: 4
+anim_jump
+  rotate: false
+  xy: 929, 10
+  size: 69, 94
+  orig: 69, 94
+  offset: 0, 0
+  index: 5
+anim_jump
+  rotate: false
+  xy: 1000, 10
+  size: 69, 94
+  orig: 69, 94
+  offset: 0, 0
+  index: 6
+anim_run
+  rotate: false
+  xy: 1071, 15
+  size: 60, 89
+  orig: 60, 89
+  offset: 0, 0
+  index: 1
+anim_run
+  rotate: false
+  xy: 1133, 15
+  size: 60, 89
+  orig: 60, 89
+  offset: 0, 0
+  index: 2
+anim_run
+  rotate: false
+  xy: 1195, 15
+  size: 60, 89
+  orig: 60, 89
+  offset: 0, 0
+  index: 3
+anim_run
+  rotate: false
+  xy: 1257, 15
+  size: 60, 89
+  orig: 60, 89
+  offset: 0, 0
+  index: 4
+anim_run
+  rotate: false
+  xy: 1319, 15
+  size: 60, 89
+  orig: 60, 89
+  offset: 0, 0
+  index: 5
+anim_run
+  rotate: false
+  xy: 1381, 15
+  size: 60, 89
+  orig: 60, 89
+  offset: 0, 0
+  index: 6

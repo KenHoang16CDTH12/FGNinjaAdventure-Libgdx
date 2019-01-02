@@ -1,47 +1,34 @@
 package com.fgdev.game.entitiles.bullets;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Pool;
-import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.BodyFactory;
 
 import static com.fgdev.game.Constants.*;
 
-public class Kunai extends Sprite implements Pool.Poolable {
+public class Kunai extends Bullet {
 
     private TextureAtlas.AtlasRegion kunai;
-    private Body body;
-    private BodyFactory bodyFactory;
-    private float stateTime;
-    private boolean setToDestroy;
-    private boolean isDirectionRight;
-    private World world;
-    private boolean alive;
 
-    public Kunai(World world) {
-        this.world = world;
-        alive = false;
-        bodyFactory = BodyFactory.getInstance(world);
-    }
-
-    public void init(float x, float y, boolean isDirectionRight) {
+    public Kunai(World world, float x, float y, boolean isDirectionRight) {
+        super(world);
+        this.x = x;
+        this.y = y;
         this.isDirectionRight = isDirectionRight;
-        alive = true;
-        stateTime = 0;
         kunai = Assets.instance.playerGirl.kunai;
-        defineKunai(x, y);
+        init();
         setRegion(kunai);
         setBounds(x, y, 54 * 2 / PPM, 12 * 2 / PPM);
     }
 
-    private void defineKunai(float x, float y) {
+    @Override
+    protected void defineBullet() {
         body = bodyFactory.makeBoxPolyBody(
-                isDirectionRight ? x : x - 1.50f,
+                x,
                 y,
                 54 / PPM,
                 12 / PPM,
@@ -52,19 +39,12 @@ public class Kunai extends Sprite implements Pool.Poolable {
         body.setLinearVelocity(new Vector2(isDirectionRight ? 10 : -10,0));
     }
 
-    public void update(float dt){
-        stateTime += dt;
+    @Override
+    public void update(float dt) {
+        super.update(dt);
         setRegion(getFrame(dt));
         setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y - getHeight() / 2);
-        if((stateTime > 3 || setToDestroy) && alive) {
-            world.destroyBody(body);
-            alive = false;
-        }
-
-        if((isDirectionRight && body.getLinearVelocity().x < 0) || (!isDirectionRight && body.getLinearVelocity().x > 0))
-            setToDestroy();
     }
-
 
     private TextureRegion getFrame(float dt) {
         //if kunai is running left and the texture isnt facing left... flip it.
@@ -80,23 +60,4 @@ public class Kunai extends Sprite implements Pool.Poolable {
         return kunai;
     }
 
-
-    public void setToDestroy(){
-        setToDestroy = true;
-    }
-
-
-    @Override
-    public void reset() {
-        alive = false;
-        body = null;
-        kunai = null;
-        stateTime = 0;
-        setToDestroy = false;
-        isDirectionRight = false;
-    }
-
-    public boolean isAlive() {
-        return alive;
-    }
 }

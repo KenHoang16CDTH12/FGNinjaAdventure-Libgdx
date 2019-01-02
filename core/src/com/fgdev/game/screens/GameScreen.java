@@ -66,13 +66,8 @@ public class GameScreen extends AbstractGameScreen {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-    }
-
-    @Override
     public InputProcessor getInputProcessor() {
-        return gameScreenLogic;
+        return gameScreenLogic.getJoystickOverlay().getStage();
     }
 
 }

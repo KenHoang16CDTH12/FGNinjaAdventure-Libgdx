@@ -70,7 +70,7 @@ public class Feather extends ItemObject implements Pool.Poolable {
     public void collected(Player player) {
         ValueManager.instance.score += score();
         scoreIndicator.addScoreItem(getX(), getY(), score());
-        AudioManager.instance.play(Assets.instance.sounds.pickupFeather);
+        AudioManager.instance.play(Assets.instance.sounds.pickup_feather);
         player.setFeatherPowerup(true);
         destroy();
     }

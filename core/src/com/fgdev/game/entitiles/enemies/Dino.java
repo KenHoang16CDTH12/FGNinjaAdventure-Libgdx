@@ -13,7 +13,6 @@ import com.fgdev.game.entitiles.Player;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.utils.Assets;
 import com.fgdev.game.utils.BodyFactory;
-import com.fgdev.game.utils.ValueManager;
 
 import static com.fgdev.game.Constants.PPM;
 
@@ -128,10 +127,10 @@ public class Dino  extends Enemy implements Pool.Poolable {
     private State getState() {
         if (isDead)
             return State.DEAD;
-        else if (body.getLinearVelocity().x != 0)
-            return State.RUN;
         else if (isAttack)
             return State.JUMP;
+        else if (body.getLinearVelocity().x != 0)
+            return State.RUN;
             // if none of these return then he must be standing
         else
             return State.IDLE;
@@ -178,11 +177,12 @@ public class Dino  extends Enemy implements Pool.Poolable {
 
     @Override
     public int score() {
-        return 500;
+        return 50;
     }
 
     @Override
     public void killed() {
+        super.killed();
         setRegion((TextureRegion) dinoDead.getKeyFrame(stateTimer));
         isDead = true;
         isRun = false;

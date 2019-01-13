@@ -73,7 +73,7 @@ public class Coin extends ItemObject implements Pool.Poolable {
     public void collected(Player player) {
         ValueManager.instance.score += score();
         scoreIndicator.addScoreItem(getX(), getY(), score());
-        AudioManager.instance.play(Assets.instance.sounds.pickupCoin);
+        AudioManager.instance.play(Assets.instance.sounds.pickup_coin);
         destroy();
     }
 

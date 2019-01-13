@@ -66,7 +66,7 @@ public class Crate extends BoxObject implements Pool.Poolable {
     public void destroyBox() {
         ValueManager.instance.score += score();
         scoreIndicator.addScoreItem(getX(), getY(), score());
-        AudioManager.instance.play(Assets.instance.sounds.pickupFeather);
+        AudioManager.instance.play(Assets.instance.sounds.destroy);
         destroy();
     }
 

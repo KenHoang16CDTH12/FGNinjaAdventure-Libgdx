@@ -2,8 +2,6 @@ package com.fgdev.game.screens;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
-import com.fgdev.game.utils.Assets;
-import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.utils.GamePreferences;
 import com.fgdev.game.logics.GameScreenLogic;
 
@@ -20,7 +18,6 @@ public class GameScreen extends AbstractGameScreen {
 
     @Override
     public void render(float deltaTime) {
-        // Do not update game world when paused.
         if (!paused) {
             // Update game world by the time that has passed
             // since last rendered frame.
@@ -29,14 +26,13 @@ public class GameScreen extends AbstractGameScreen {
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         // Clears the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        // Render game world to screen
+        // Do not update game world when paused.
         gameScreenLogic.render();
     }
 
     @Override
     public void show() {
         GamePreferences.instance.load();
-        AudioManager.instance.play(Assets.instance.music.background1);
         gameScreenLogic = new GameScreenLogic(game);
         Gdx.input.setCatchBackKey(true);
     }

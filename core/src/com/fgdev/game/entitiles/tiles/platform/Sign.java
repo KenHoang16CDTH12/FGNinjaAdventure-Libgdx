@@ -57,16 +57,34 @@ public class Sign extends PlatformObject implements Pool.Poolable {
         if (typeSign == MAP_SIGN) {
             if (level == 1) {
                 // Next level 2
+                ValueManager.instance.levelCurrent = 2;
                 ValueManager.instance.mapPath = Constants.LEVEL_02;
                 ValueManager.instance.background = Assets.instance.textures.background2;
-                ValueManager.instance.isNextLevel = true;
             } else if (level == 2) {
                 // Next level 3
-                ValueManager.instance.background = Assets.instance.textures.background2;
-                ValueManager.instance.isNextLevel = true;
-            } else {
-                ValueManager.instance.background = Assets.instance.textures.background;
+                ValueManager.instance.levelCurrent = 3;
+                ValueManager.instance.mapPath = Constants.LEVEL_03;
+                ValueManager.instance.background = Assets.instance.textures.background3;
+            } else if (level == 3) {
+                // Next level 4
+                ValueManager.instance.levelCurrent = 4;
+                ValueManager.instance.mapPath = Constants.LEVEL_04;
+                ValueManager.instance.background = Assets.instance.textures.background4;
+            } else if (level == 4) {
+                // Next level 5
+                ValueManager.instance.levelCurrent = 5;
+                ValueManager.instance.mapPath = Constants.LEVEL_05;
+                ValueManager.instance.background = Assets.instance.textures.background5;
+            } else if (level == 5) {
+                // Next level 6
+                ValueManager.instance.levelCurrent = 6;
+                ValueManager.instance.mapPath = Constants.LEVEL_05;
+                ValueManager.instance.background = Assets.instance.textures.background5;
             }
+            ValueManager.instance.posX = Constants.POS_X;
+            ValueManager.instance.posY = Constants.POS_Y;
+            ValueManager.instance.timeNextLevel = Constants.TIME_NEXT_LEVEL;
+            ValueManager.instance.isNextLevel = true;
         }
     }
 }

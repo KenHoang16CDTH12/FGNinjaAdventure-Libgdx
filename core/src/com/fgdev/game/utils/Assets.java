@@ -58,11 +58,11 @@ public class Assets implements Disposable, AssetErrorListener {
         // set asset manager error handler
         assetManager.setErrorListener(this);
         // load texture png
-        assetManager.load("images/bg.png", Texture.class);
         assetManager.load("images/bg1.png", Texture.class);
         assetManager.load("images/bg2.png", Texture.class);
         assetManager.load("images/bg3.png", Texture.class);
         assetManager.load("images/bg4.png", Texture.class);
+        assetManager.load("images/bg5.png", Texture.class);
         // load texture atlas
         assetManager.load(Constants.TEXTURE_ATLAS_ITEM, TextureAtlas.class);
         assetManager.load(Constants.TEXTURE_ATLAS_PLAYER_BOY, TextureAtlas.class);
@@ -76,18 +76,24 @@ public class Assets implements Disposable, AssetErrorListener {
         assetManager.load(Constants.TEXTURE_ATLAS_GHOST, TextureAtlas.class);
         assetManager.load(Constants.TEXTURE_ATLAS_BONE, TextureAtlas.class);
         assetManager.load(Constants.TEXTURE_ATLAS_JOYSTICK, TextureAtlas.class);
+        // load music
+        assetManager.load("musics/background.mp3", Music.class);
+        assetManager.load("musics/menu_music.mp3", Music.class);
         // load sounds
-        assetManager.load("sounds/click.wav", Sound.class);
-        assetManager.load("sounds/glide.wav", Sound.class);
         assetManager.load("sounds/add_life.wav", Sound.class);
+        assetManager.load("sounds/bullet_enemy.wav", Sound.class);
+        assetManager.load("sounds/click.wav", Sound.class);
+        assetManager.load("sounds/destroy.wav", Sound.class);
+        assetManager.load("sounds/enemy_dead.wav", Sound.class);
+        assetManager.load("sounds/glide.wav", Sound.class);
+        assetManager.load("sounds/jump.wav", Sound.class);
+        assetManager.load("sounds/jump_throw.wav", Sound.class);
+        assetManager.load("sounds/live_lost.wav", Sound.class);
+        assetManager.load("sounds/melee.wav", Sound.class);
         assetManager.load("sounds/pickup_coin.wav", Sound.class);
         assetManager.load("sounds/pickup_feather.wav", Sound.class);
-        assetManager.load("sounds/live_lost.wav", Sound.class);
-        // load music
-        assetManager.load("musics/background1.mp3", Music.class);
-        assetManager.load("musics/background2.mp3", Music.class);
-        assetManager.load("musics/menubackground.mp3", Music.class);
-        assetManager.load("musics/run.mp3", Music.class);
+        assetManager.load("sounds/throw.wav", Sound.class);
+        assetManager.load("sounds/water.wav", Sound.class);
         // start loading assets and wait until finished
         assetManager.finishLoading();
 
@@ -160,54 +166,66 @@ public class Assets implements Disposable, AssetErrorListener {
 
     public class AssetTexture {
 
-        public final Texture background;
         public final Texture background1;
         public final Texture background2;
         public final Texture background3;
         public final Texture background4;
+        public final Texture background5;
 
         public AssetTexture (AssetManager am) {
-            background = am.get("images/bg.png", Texture.class);
             background1 = am.get("images/bg1.png", Texture.class);
             background2 = am.get("images/bg2.png", Texture.class);
             background3 = am.get("images/bg3.png", Texture.class);
             background4 = am.get("images/bg4.png", Texture.class);
-        }
-
-    }
-
-    public class AssetSounds {
-
-        public final Sound glide;
-        public final Sound pickupCoin;
-        public final Sound pickupFeather;
-        public final Sound liveLost;
-        public final Sound addLife;
-        public final Sound click;
-
-        public AssetSounds (AssetManager am) {
-            glide = am.get("sounds/glide.wav", Sound.class);
-            pickupCoin = am.get("sounds/pickup_coin.wav", Sound.class);
-            pickupFeather = am.get("sounds/pickup_feather.wav", Sound.class);
-            liveLost = am.get("sounds/live_lost.wav", Sound.class);
-            addLife = am.get("sounds/add_life.wav", Sound.class);
-            click = am.get("sounds/click.wav", Sound.class);
+            background5 = am.get("images/bg5.png", Texture.class);
         }
 
     }
 
     public class AssetMusic {
 
-        public final Music background1;
-        public final Music background2;
-        public final Music menuBackground;
-        public final Music run;
+        public final Music background;
+        public final Music menu_music;
 
         public AssetMusic (AssetManager am) {
-            background1 = am.get("musics/background1.mp3", Music.class);
-            background2 = am.get("musics/background2.mp3", Music.class);
-            menuBackground = am.get("musics/menubackground.mp3", Music.class);
-            run = am.get("musics/run.mp3", Music.class);
+            background = am.get("musics/background.mp3", Music.class);
+            menu_music = am.get("musics/menu_music.mp3", Music.class);
+        }
+
+    }
+
+    public class AssetSounds {
+
+        public final Sound add_life;
+        public final Sound bullet_enemy;
+        public final Sound click;
+        public final Sound destroy;
+        public final Sound enemy_dead;
+        public final Sound glide;
+        public final Sound jump;
+        public final Sound jump_throw;
+        public final Sound live_lost;
+        public final Sound melee;
+        public final Sound pickup_coin;
+        public final Sound pickup_feather;
+        public final Sound attackThrow;
+        public final Sound water;
+
+        public AssetSounds (AssetManager am) {
+            add_life = am.get("sounds/add_life.wav", Sound.class);
+            bullet_enemy = am.get("sounds/bullet_enemy.wav", Sound.class);
+            click = am.get("sounds/click.wav", Sound.class);
+            destroy = am.get("sounds/destroy.wav", Sound.class);
+            enemy_dead = am.get("sounds/enemy_dead.wav", Sound.class);
+            glide = am.get("sounds/glide.wav", Sound.class);
+            jump = am.get("sounds/jump.wav", Sound.class);
+            jump_throw = am.get("sounds/jump_throw.wav", Sound.class);
+            live_lost = am.get("sounds/live_lost.wav", Sound.class);
+            melee = am.get("sounds/melee.wav", Sound.class);
+            pickup_coin = am.get("sounds/pickup_coin.wav", Sound.class);
+            pickup_feather = am.get("sounds/pickup_feather.wav", Sound.class);
+            attackThrow = am.get("sounds/throw.wav", Sound.class);
+            water = am.get("sounds/water.wav", Sound.class);
         }
 
     }

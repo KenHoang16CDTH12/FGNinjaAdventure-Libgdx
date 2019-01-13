@@ -4,9 +4,11 @@ import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.EllipseMapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.fgdev.game.Constants;
 import com.fgdev.game.entitiles.enemies.*;
 import com.fgdev.game.entitiles.tiles.box.BoxObject;
 import com.fgdev.game.entitiles.tiles.box.Crate;
@@ -14,6 +16,9 @@ import com.fgdev.game.entitiles.tiles.item.Coin;
 import com.fgdev.game.entitiles.tiles.item.Feather;
 import com.fgdev.game.entitiles.tiles.item.ItemObject;
 import com.fgdev.game.entitiles.tiles.platform.*;
+import com.fgdev.game.utils.ValueManager;
+
+import static com.fgdev.game.Constants.PPM;
 
 public class B2WorldCreator {
     private World world;

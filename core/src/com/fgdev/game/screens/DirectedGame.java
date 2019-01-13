@@ -21,7 +21,6 @@ public abstract class DirectedGame implements ApplicationListener {
     private SpriteBatch batch;
     private float t;
     private ScreenTransition screenTransition;
-    private float accumulator;
 
     public void setScreen (AbstractGameScreen screen) {
         setScreen(screen, null);
@@ -31,11 +30,11 @@ public abstract class DirectedGame implements ApplicationListener {
                            ScreenTransition screenTransition) {
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
+
         if (!init) {
             currFbo = new FrameBuffer(Pixmap.Format.RGB888, w, h, false);
             nextFbo = new FrameBuffer(Pixmap.Format.RGB888, w, h, false);
             batch = new SpriteBatch();
-            accumulator = 0;
             init = true;
         }
         // start new transition
@@ -122,5 +121,13 @@ public abstract class DirectedGame implements ApplicationListener {
             batch.dispose();
             init = false;
         }
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
+    public AbstractGameScreen getCurrScreen() {
+        return currScreen;
     }
 }

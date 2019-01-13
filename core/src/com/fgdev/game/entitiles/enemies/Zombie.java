@@ -150,10 +150,10 @@ public class Zombie extends Enemy implements Pool.Poolable {
     private State getState() {
         if (isDead)
             return State.DEAD;
-        else if (body.getLinearVelocity().x != 0)
-            return State.WALK;
         else if (isAttack)
             return State.ATTACK;
+        else if (body.getLinearVelocity().x != 0)
+            return State.WALK;
             // if none of these return then he must be standing
         else
             return State.IDLE;
@@ -200,11 +200,12 @@ public class Zombie extends Enemy implements Pool.Poolable {
 
     @Override
     public int score() {
-        return 100;
+        return 50;
     }
 
     @Override
     public void killed() {
+        super.killed();
         setRegion((TextureRegion) zombieDead.getKeyFrame(stateTimer));
         isDead = true;
         isWalk = false;

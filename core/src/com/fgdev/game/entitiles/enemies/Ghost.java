@@ -46,7 +46,7 @@ public class Ghost extends Enemy implements Pool.Poolable {
         previousState = State.IDLE;
         isRun = true;
         isDead = false;
-        speed = 1f;
+        speed = 2f;
         ghostIdle = Assets.instance.ghost.animIdle;
         ghostRun = Assets.instance.ghost.animRun;
         ghostDead = Assets.instance.ghost.animDead;
@@ -186,11 +186,12 @@ public class Ghost extends Enemy implements Pool.Poolable {
 
     @Override
     public int score() {
-        return 100;
+        return 50;
     }
 
     @Override
     public void killed() {
+        super.killed();
         setRegion((TextureRegion) ghostDead.getKeyFrame(stateTimer));
         isDead = true;
         isRun = false;

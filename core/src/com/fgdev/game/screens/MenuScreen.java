@@ -2,7 +2,6 @@ package com.fgdev.game.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -106,7 +105,8 @@ public class MenuScreen extends AbstractGameScreen {
         stage = new Stage(new StretchViewport(Constants.WINDOW_WIDTH,
                 Constants.WINDOW_HEIGHT));
         ValueManager.instance.init();
-        AudioManager.instance.play(Assets.instance.music.menuBackground);
+        AudioManager.instance.stopMusic();
+        AudioManager.instance.play(Assets.instance.music.menu_music);
         rebuildStage();
     }
 
@@ -256,9 +256,9 @@ public class MenuScreen extends AbstractGameScreen {
     }
 
     private void onPlayClicked () {
-        // switch to menu screen
-        ScreenTransition transition = ScreenTransitionFade.init(0.75f);
-        game.setScreen(new GameScreen(game), transition);
+        game.setScreen(new LevelStartScreen(game));
+        AudioManager.instance.stopMusic();
+        AudioManager.instance.play(Assets.instance.music.background);
     }
 
     private void onOptionsClicked () {

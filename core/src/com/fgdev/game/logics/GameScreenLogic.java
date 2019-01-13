@@ -28,10 +28,8 @@ import com.fgdev.game.entitiles.tiles.item.ItemObject;
 import com.fgdev.game.helpers.BackgroundTiledMapRenderer;
 import com.fgdev.game.helpers.ScoreIndicator;
 import com.fgdev.game.screens.*;
-import com.fgdev.game.screens.transitions.ScreenTransition;
 import com.fgdev.game.helpers.B2WorldCreator;
 import com.fgdev.game.helpers.WorldContactListener;
-import com.fgdev.game.screens.transitions.ScreenTransitionSlide;
 import com.fgdev.game.utils.*;
 
 import static com.fgdev.game.Constants.*;
@@ -61,8 +59,6 @@ public class GameScreenLogic implements Disposable {
     private Player player;
     // Decoration
     private Clouds clouds;
-    // Accumulator
-    private float accumulator;
     // ScoreIndicator
     private ScoreIndicator scoreIndicator;
     // HelperScreen
@@ -90,7 +86,6 @@ public class GameScreenLogic implements Disposable {
         initLevel();
         initObject();
 
-        accumulator = 0;
         mapWidth = ((TiledMapTileLayer) map.getLayers().get(0)).getWidth();
         cameraLeftLimit = V_WIDTH / 2;
         cameraRightLimit =  mapWidth - V_WIDTH / 2;
@@ -98,7 +93,7 @@ public class GameScreenLogic implements Disposable {
 
     private void initCamera() {
         // Init batch
-        batch = new SpriteBatch();
+        batch = game.getBatch();
         // Create cam used to follow mario through cam world
         camera = new OrthographicCamera();
         // Create a FitViewport to maintain virtual aspect ratio despite screen size
@@ -161,12 +156,7 @@ public class GameScreenLogic implements Disposable {
     }
 
     public void update (float deltaTime) {
-        // Box2D world step
-        accumulator += Math.min(deltaTime, 0.25f);
-        while (accumulator >= TIME_STEP) {
-            accumulator -= TIME_STEP;
-            world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-        }
+        world.step(deltaTime, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
         // Check game over
         if (ValueManager.instance.isGameOver()) {
             ValueManager.instance.timeLeftGameOverDelay -= deltaTime;
@@ -196,7 +186,20 @@ public class GameScreenLogic implements Disposable {
         if (ValueManager.instance.scoreVisual < ValueManager.instance.score)
             ValueManager.instance.scoreVisual = Math.min(ValueManager.instance.score, ValueManager.instance.scoreVisual + 250 * deltaTime);
         if (!ValueManager.instance.isGameOver() && player.isPlayerFalling()) {
+            AudioManager.instance.play(Assets.instance.sounds.water);
             player.playerDie();
+        }
+        // Next Level
+        if (ValueManager.instance.isNextLevel) {
+            ValueManager.instance.timeNextLevel -= deltaTime;
+            player.climb();
+            if (ValueManager.instance.timeNextLevel < 0) {
+                if (ValueManager.instance.levelCurrent > ValueManager.instance.totalLevel) {
+                    backToMenu();
+                } else {
+                    game.setScreen(new LevelStartScreen(game));
+                }
+            }
         }
     }
 
@@ -470,7 +473,6 @@ public class GameScreenLogic implements Disposable {
 
     @Override
     public void dispose() {
-        batch.dispose();
         map.dispose();
         world.dispose();
         renderer.dispose();
@@ -484,9 +486,7 @@ public class GameScreenLogic implements Disposable {
 
     public void backToMenu () {
         // switch to menu screen
-        ScreenTransition transition = ScreenTransitionSlide.init(0.75f,
-                ScreenTransitionSlide.DOWN, false, Interpolation.bounceOut);
-        game.setScreen(new MenuScreen(game), transition);
+        game.setScreen(new MenuScreen(game));
     }
 
     private void handleInput(float deltaTime) {
@@ -516,9 +516,6 @@ public class GameScreenLogic implements Disposable {
         }
 
         // Hacking
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
-            renderer.setBackground(Assets.instance.textures.background);
-        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
             renderer.setBackground(Assets.instance.textures.background1);
         }
@@ -527,6 +524,15 @@ public class GameScreenLogic implements Disposable {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
             renderer.setBackground(Assets.instance.textures.background3);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+            renderer.setBackground(Assets.instance.textures.background3);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
+            renderer.setBackground(Assets.instance.textures.background4);
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
+            renderer.setBackground(Assets.instance.textures.background5);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.COMMA)) {
             ValueManager.instance.lives++;

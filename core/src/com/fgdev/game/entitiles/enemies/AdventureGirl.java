@@ -46,7 +46,7 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
     private boolean isSlide;
 
     private float timeDelayIdle = 1;
-    private float timeDelayRun = 3;
+    private float timeDelayRun = 2;
 
     public AdventureGirl(World world, ScoreIndicator scoreIndicator) {
         super(world, scoreIndicator);
@@ -69,7 +69,7 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
         isShoot = false;
         isMelee = false;
         isSlide = false;
-        speed = 1f;
+        speed = 1.5f;
         // Extend Abstract
         init();
         setRegion((TextureRegion) adventureGirlIdle.getKeyFrame(stateTimer));
@@ -203,12 +203,12 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
     private State getState() {
         if (isDead)
             return State.DEAD;
-        else if (body.getLinearVelocity().x != 0)
-            return State.RUN;
         else if (isMelee)
             return State.MELEE;
         else if (isSlide)
             return State.SLIDE;
+        else if (body.getLinearVelocity().x != 0)
+            return State.RUN;
         else if (isShoot)
             return State.SHOOT;
             // if none of these return then he must be standing
@@ -267,11 +267,12 @@ public class AdventureGirl extends Enemy implements Pool.Poolable {
 
     @Override
     public int score() {
-        return 150;
+        return 100;
     }
 
     @Override
     public void killed() {
+        super.killed();
         setRegion((TextureRegion) adventureGirlDead.getKeyFrame(stateTimer));
         isDead = true;
         isRun = false;

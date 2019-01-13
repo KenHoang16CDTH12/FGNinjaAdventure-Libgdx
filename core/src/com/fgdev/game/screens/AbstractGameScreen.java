@@ -13,11 +13,6 @@ public abstract class AbstractGameScreen implements Screen {
         this.game = game;
     }
 
-    public abstract void render (float deltaTime);
-    public abstract void resize (int width, int height);
-    public abstract void show ();
-    public abstract void hide ();
-    public abstract void pause ();
     public abstract InputProcessor getInputProcessor ();
 
     @Override

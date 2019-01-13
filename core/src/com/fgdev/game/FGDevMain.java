@@ -27,9 +27,7 @@ public class FGDevMain extends DirectedGame {
 		// Load preferences for audio settings and start playing music
 		GamePreferences.instance.load();
 		// Start game at menu screen
-		ScreenTransition transition = ScreenTransitionSlice.init(2,
-				ScreenTransitionSlice.UP_DOWN, 10, Interpolation.pow5Out);
-		setScreen(new MenuScreen(FGDevMain.this), transition);
+		setScreen(new MenuScreen(FGDevMain.this));
 	}
 
 	@Override

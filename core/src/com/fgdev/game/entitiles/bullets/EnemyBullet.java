@@ -36,7 +36,7 @@ public class EnemyBullet extends Bullet {
                 BodyDef.BodyType.KinematicBody,
                 this
         );
-        body.setLinearVelocity(new Vector2(isDirectionRight ? 8 : -8,0));
+        body.setLinearVelocity(new Vector2(isDirectionRight ? 12 : -12,0));
     }
 
 

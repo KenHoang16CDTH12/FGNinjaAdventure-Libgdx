@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="180" height="10" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="456">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="180" height="10" tilewidth="128" tileheight="128" infinite="0" nextlayerid="25" nextobjectid="461">
  <tileset firstgid="1" name="tile_sky" tilewidth="128" tileheight="128" spacing="2" margin="2" tilecount="15" columns="15">
   <image source="tile_sky.png" width="2048" height="256"/>
  </tileset>
@@ -12,14 +12,17 @@
  <tileset firstgid="52" name="tile_machine" tilewidth="128" tileheight="128" spacing="2" margin="2" tilecount="45" columns="15">
   <image source="tile_machine.png" width="2048" height="512"/>
  </tileset>
+ <tileset firstgid="97" name="tile_winter" tilewidth="130" tileheight="130" tilecount="45" columns="15">
+  <image source="../4/tile_winter.png" width="2048" height="512"/>
+ </tileset>
  <layer id="23" name="background" width="180" height="10">
   <data encoding="base64" compression="zlib">
-   eJztWNEOwiAMRKeLTpf4B84H340v/v+fCQ9LsN5G61oy5i65ZGGkUHqUgnPLRRd97zz3CqwF42uMmRrvKpjPivli47klrMi/Kuq/ND0jH1foY0xnmkBaqcm/OtG/ZD0jHy1wM7Y/d4zpTBNnzyNhS+ZgoefG8+R4+7VUPcc5qbT8j/LplNyaS8+cOVjoWaI5tOekbL+sDvsoxZBu47XKHbupSMWZ409qT+Te53PRsyUkepbq9t/1zNGK1bpcRuYTj6mRKxFzxZy+YyAftXRbsp45uTWVZzl6pnUntcO5R3LvmrnuSv1YqKbWJvUzdQZZtJcA6TmM/PvlLKd2OHU3tzansbZ4o+3PBcs6hrMWq54/IY1HyEVPwoPQBrKDbIQ+j4icPnG/EIuXk59B3HwZbFvVMeheiHxsQJt2+70gvgGgbhmv
+   eJztWE0PwiAMZX5Fp0v8B8aDd+PF///PhIMJdm/SakvG4CXvspCW0kdb5lwd2HhuFbjL7FPir6EeLFXPF8F+GuToPFeE68x+Ojf2uzQ9oxgtcDW2P3egHFr0zJPngXAge4j9aum59zw63n211DOKUQtxrbC+L9pAde6f2ppLz5w9WOhZojl056QcRlanY5RiSrfxWZU2v6fyzIkndSdy3/O56NkSEj1LdVu7njlasTqX85f9xD41aiVirpzTdx+KUUu3JeuZU1tTdZajZzp3UjucdyT3rWk5WyJfaKbWJo0z1YMsvpcAaR9G8f3Sy6kdztzNnc1pri3+ab37guUcwzmLpudPSPMRatGDcC+0gewgG2HNPSJnTbwu5OLp5D2IWy+Dbas5Br0LUYw9+Kb9/VYQX5RDGVM=
   </data>
  </layer>
  <layer id="24" name="foreground" width="180" height="10">
   <data encoding="base64" compression="zlib">
-   eJzt1cEJwCAABEGLyEsE++8yHQii5iTMVHCPhSsFuEFLD4CNnvQArtPTAxakevYLnJDq2S9wgp4ZqekBk/QM6/TMn+gZ+MILk0YBOg==
+   eJzt08EJwCAQRFGLyCkISf9VpgNBxIzKew3sHP6WAuzgTQ+ADjU9gOU86QEDrtBdf8QMqZ5Tdzmbnmm50wM66RnG6ZmT6Bn4wwefxQFG
   </data>
  </layer>
  <objectgroup id="4" name="grounds">
@@ -30,20 +33,23 @@
   <object id="89" x="3461.96" y="896.242" width="506.667" height="381.333"/>
   <object id="90" x="4349.96" y="894.909" width="772" height="382.667"/>
   <object id="91" x="5501.96" y="894.909" width="770.667" height="382.667"/>
-  <object id="92" x="5884.56" y="130.909" width="132" height="381.333"/>
-  <object id="93" x="6145.96" y="130.909" width="509.333" height="378.667"/>
-  <object id="94" x="6781.96" y="129.576" width="386.667" height="1149.33"/>
+  <object id="92" x="5884.56" y="254.909" width="132" height="257.333"/>
+  <object id="93" x="6145.96" y="254.909" width="509.333" height="254.667"/>
+  <object id="94" x="6781.96" y="257.576" width="386.667" height="1021.33"/>
   <object id="95" x="7421.96" y="1.57575" width="2430.67" height="893.333"/>
   <object id="96" x="9987.26" y="384.364" width="257.333" height="506.545"/>
   <object id="97" x="10241.3" y="384.667" width="254" height="894.242"/>
   <object id="98" x="10497.3" y="894.909" width="3198" height="382"/>
   <object id="99" x="7295.26" y="1152.24" width="2816" height="125.333"/>
   <object id="100" x="11134.7" y="-4.12122" width="2303.03" height="639.394"/>
-  <object id="101" x="14078.6" y="126.909" width="384" height="1150.67"/>
+  <object id="101" x="14078.6" y="258.909" width="384" height="1018.67"/>
   <object id="102" x="14719.3" y="768.242" width="512.667" height="510"/>
   <object id="103" x="15487.3" y="639.576" width="512.667" height="639.333"/>
   <object id="104" x="16256" y="512.242" width="514" height="767.333"/>
   <object id="105" x="17023.3" y="384.909" width="512" height="894.667"/>
+  <object id="456" x="0" y="0" height="1280"/>
+  <object id="457" x="0" y="0" width="17536"/>
+  <object id="460" x="17544" y="34" height="908"/>
  </objectgroup>
  <objectgroup id="5" name="hidden_walls">
   <object id="106" x="136.261" y="354.969" width="8.84845" height="154.546"/>
@@ -57,8 +63,8 @@
   <object id="114" x="5112.66" y="739.939" width="8.84845" height="154.546"/>
   <object id="115" x="5500.56" y="742.969" width="8.84845" height="154.546"/>
   <object id="116" x="6258.16" y="739.939" width="8.84845" height="154.546"/>
-  <object id="117" x="5890.86" y="-18.3639" width="8.84845" height="154.546"/>
-  <object id="118" x="6648.16" y="-25.0306" width="8.84845" height="154.546"/>
+  <object id="117" x="5888.19" y="98.9694" width="8.84845" height="154.546"/>
+  <object id="118" x="6648.16" y="100.303" width="8.84845" height="154.546"/>
   <object id="119" x="7430.86" y="997.636" width="8.84845" height="154.546"/>
   <object id="120" x="9844.16" y="998.969" width="8.84845" height="154.546"/>
   <object id="121" x="9982.86" y="226.969" width="8.84845" height="154.546"/>
@@ -74,7 +80,7 @@
   <object id="126" x="15488.2" y="486.969" width="8.84845" height="154.546"/>
  </objectgroup>
  <objectgroup id="6" name="ladders">
-  <object id="132" x="6021.76" y="129.409" width="115" height="769"/>
+  <object id="132" x="6021.76" y="256.076" width="115" height="642.333"/>
   <object id="133" x="9857.76" y="383.409" width="123" height="769"/>
  </objectgroup>
  <objectgroup id="7" name="spikes">
@@ -370,7 +376,7 @@
     <property name="type" type="int" value="1"/>
    </properties>
   </object>
-  <object id="246" x="7037.26" y="2.90908" width="132" height="136">
+  <object id="246" x="7031.93" y="117.576" width="132" height="136">
    <properties>
     <property name="type" type="int" value="1"/>
    </properties>
@@ -390,7 +396,7 @@
     <property name="type" type="int" value="1"/>
    </properties>
   </object>
-  <object id="250" x="14335.3" y="-1.09092" width="132" height="136">
+  <object id="250" x="14335.3" y="116.909" width="132" height="136">
    <properties>
     <property name="type" type="int" value="1"/>
    </properties>
@@ -437,7 +443,7 @@
     <property name="type" type="int" value="0"/>
    </properties>
   </object>
-  <object id="257" x="271.261" y="756.909" width="93.3333" height="134.667">
+  <object id="257" x="1171.26" y="748.909" width="93.3333" height="134.667">
    <properties>
     <property name="type" type="int" value="0"/>
    </properties>
@@ -452,7 +458,7 @@
     <property name="type" type="int" value="0"/>
    </properties>
   </object>
-  <object id="260" x="6391.06" y="-1.75776" width="93.3333" height="134.667">
+  <object id="260" x="6496.39" y="116.909" width="93.3333" height="134.667">
    <properties>
     <property name="type" type="int" value="0"/>
    </properties>

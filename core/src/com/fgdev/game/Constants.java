@@ -30,11 +30,16 @@ public class Constants {
     // Location of atlas file for level
     public static final String LEVEL_01 = "levels/map/1/map1.tmx";
     public static final String LEVEL_02 = "levels/map/2/map2.tmx";
+    public static final String LEVEL_03 = "levels/map/3/map3.tmx";
+    public static final String LEVEL_04 = "levels/map/4/map4.tmx";
+    public static final String LEVEL_05 = "levels/map/5/map5.tmx";
     // Amount of extra lives at level start
     public static final int LIVES_START = 3;
     // Delay after game over
     public static final float TIME_DELAY_GAME_OVER = 5;
+    public static final float TIME_NEXT_LEVEL = 5;
     public static final float TIME_DELAY_LIVE_LOST = 3;
+    public static final int TOTAL_LEVEL = 5;
     // Location of atlas
     public static final String TEXTURE_ATLAS_UI = "images/ui.atlas";
     public static final String TEXTURE_ATLAS_LIBGDX_UI = "images/star-soldier-ui.atlas";
@@ -72,12 +77,11 @@ public class Constants {
 
     // Logic
     public static final Vector2 GRAVITY = new Vector2(0.0f, -9.8f);
-    public static final float TIME_STEP = 1 / 60f;
     public static final int VELOCITY_ITERATIONS = 6;
     public static final int POSITION_ITERATIONS = 2;
     // speed
     public static final float SPEED_PLAYER_X = 0.1f;
     // Position player
     public static final float POS_X = 100 / PPM;
-    public static final float POS_Y = 350 / PPM;
+    public static final float POS_Y = 450 / PPM;
 }

@@ -53,7 +53,7 @@ public class Robot extends Enemy implements Pool.Poolable {
     private boolean isSlide;
 
     private float timeDelayIdle = 1;
-    private float timeDelayRun = 3;
+    private float timeDelayRun = 2;
 
     public Robot(World world, ScoreIndicator scoreIndicator) {
         super(world, scoreIndicator);
@@ -79,7 +79,7 @@ public class Robot extends Enemy implements Pool.Poolable {
         isShoot = false;
         isMelee = false;
         isSlide = false;
-        speed = 1f;
+        speed = 1.5f;
         // Extend Abstract
         init();
         setRegion((TextureRegion) robotIdle.getKeyFrame(stateTimer));
@@ -218,12 +218,12 @@ public class Robot extends Enemy implements Pool.Poolable {
     private State getState() {
         if (isDead)
             return State.DEAD;
-        else if (body.getLinearVelocity().x != 0)
-            return State.RUN;
         else if (isMelee)
             return State.MELEE;
         else if (isSlide)
             return State.SLIDE;
+        else if (body.getLinearVelocity().x != 0)
+            return State.RUN;
         else if (isShoot)
             return State.SHOOT;
             // if none of these return then he must be standing
@@ -281,11 +281,12 @@ public class Robot extends Enemy implements Pool.Poolable {
 
     @Override
     public int score() {
-        return 500;
+        return 100;
     }
 
     @Override
     public void killed() {
+        super.killed();
         setRegion((TextureRegion) robotDead.getKeyFrame(stateTimer));
         isDead = true;
         isRun = false;

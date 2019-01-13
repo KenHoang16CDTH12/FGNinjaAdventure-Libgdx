@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="180" height="10" tilewidth="128" tileheight="128" infinite="0" nextlayerid="41" nextobjectid="800">
+<map version="1.2" tiledversion="1.2.0" orientation="orthogonal" renderorder="right-down" width="180" height="10" tilewidth="128" tileheight="128" infinite="0" nextlayerid="41" nextobjectid="804">
  <tileset firstgid="1" name="tile_night" tilewidth="128" tileheight="128" spacing="2" margin="2" tilecount="21" columns="7">
   <image source="tile_night.png" width="1024" height="512"/>
  </tileset>
@@ -14,7 +14,7 @@
  </tileset>
  <layer id="39" name="background" width="180" height="10">
   <data encoding="base64" compression="zlib">
-   eJztl+sOgjAMhRdRE28k3n7wPL7/O1kSljTNVgpsHCf7kvMHpceWQxedq1QqKTmR7qQd+odUNoHPm89cN0he73mTjga1rP6Z9CA1mfuo/D+x/PG8HUj7QTfD9alsJc+hWfs5890gtca5hfYvDTkvPiNLnnkWWuV7aLTMavgZhLTGe472Lw05rybwWYq5hfZM6v0yN7Ma6Dyh/XMRO3emZoLXuZCebjzPV9JroW/oucx5Hjkyq4HOE9o/F7G+pvakzSeW51y+sRprZ1YDnSe0fyrG9qi1J2udlHmWZ0nMV+79X/x/g84T2j8VY3tUy0THZK3DZ2S5txE+SzwtNVHSeuln/8ksbf+UlOcvy+4fAg==
+   eJztl1kKwzAMRE3cFroFun3kPL3/napAAkLYshzbUQ16MD9pq8GTiUKdMwzDMHrlDHosGkDTInp95gM6CTQG5g/OMMqI9Q/37Qg6LLoLrudyAT1BvmBGD4SyXnPGu4Fqj+dc2783aF44I0mfcRdG5nvacJ3lWDMIaY/nXNu/N2hePvBZjdxCe6b2ftnaWQ7tPmn7tyL23sntBJ5zBb1cus830LvQN3RfttyPFp3l0O6Ttn8rYufKPROXT6zPrXxjM/buLId2n7T9a5Hao9IzSefU7DN9l8R86d7/x/832n3S9q9Fao9ynZiQpHNwRpLfeuJT4imZqSXuLHP238bi9k9Pff4B090e4w==
   </data>
  </layer>
  <layer id="40" name="foreground" width="180" height="10">
@@ -36,7 +36,7 @@
   <object id="93" x="1921.33" y="257.333" width="512" height="254.667"/>
   <object id="95" x="2561.33" y="256" width="1154.67" height="54"/>
   <object id="99" x="3836" y="257.333" width="136" height="51.3333"/>
-  <object id="105" x="4224.67" y="128.667" width="384.667" height="1151.33"/>
+  <object id="105" x="4224.67" y="256.546" width="384.667" height="1023.45"/>
   <object id="374" x="4610" y="766" width="644" height="516"/>
   <object id="378" x="5376" y="510" width="515" height="53"/>
   <object id="384" x="6016" y="1022" width="640" height="262"/>
@@ -49,6 +49,9 @@
   <object id="409" x="11649.3" y="383.334" width="765.333" height="47.3333"/>
   <object id="414" x="12540" y="378" width="1028" height="900"/>
   <object id="428" x="16636" y="380" width="1024" height="908"/>
+  <object id="800" x="0" y="0" height="1280"/>
+  <object id="801" x="0" y="0" width="17664"/>
+  <object id="802" x="17667" y="-2" height="908"/>
  </objectgroup>
  <objectgroup id="9" name="hidden_walls">
   <object id="38" x="512.426" y="612.848" width="8.84845" height="154.546"/>
@@ -393,7 +396,7 @@
   <object id="220" x="1723.67" y="1057" width="94" height="94"/>
   <object id="222" x="1819.67" y="959.667" width="94" height="94"/>
   <object id="223" x="3326.33" y="417" width="94" height="94"/>
-  <object id="227" x="4516.33" y="33.6667" width="94" height="94"/>
+  <object id="227" x="4513.66" y="161.667" width="94" height="94"/>
   <object id="484" x="6558.33" y="927.667" width="94" height="94"/>
   <object id="485" x="6463.67" y="927.667" width="94" height="94"/>
   <object id="487" x="6558.33" y="831.667" width="94" height="94"/>
@@ -500,7 +503,13 @@
   </object>
  </objectgroup>
  <objectgroup id="14" name="dinos"/>
- <objectgroup id="15" name="knights"/>
+ <objectgroup id="15" name="knights">
+  <object id="803" x="13026" y="242" width="104" height="136">
+   <properties>
+    <property name="type" type="int" value="0"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="16" name="santas">
   <object id="497" x="5578" y="434" width="103" height="71">
    <properties>
@@ -515,11 +524,5 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="18" name="bones">
-  <object id="506" x="12980" y="246" width="104" height="136">
-   <properties>
-    <property name="type" type="int" value="0"/>
-   </properties>
-  </object>
- </objectgroup>
+ <objectgroup id="18" name="bones"/>
 </map>

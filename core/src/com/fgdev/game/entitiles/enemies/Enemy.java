@@ -12,6 +12,8 @@ import com.fgdev.game.entitiles.bullets.EnemyBullet;
 import com.fgdev.game.entitiles.bullets.SpawningBullet;
 import com.fgdev.game.entitiles.tiles.item.ItemObject;
 import com.fgdev.game.helpers.ScoreIndicator;
+import com.fgdev.game.utils.Assets;
+import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.utils.BodyFactory;
 import com.fgdev.game.utils.ValueManager;
 
@@ -111,7 +113,9 @@ public abstract class Enemy extends Sprite {
 
     public abstract int score();
 
-    public abstract void killed();
+    public void killed() {
+        AudioManager.instance.play(Assets.instance.sounds.enemy_dead);
+    }
 
     public abstract void beginAttack(Player player);
 
@@ -178,6 +182,7 @@ public abstract class Enemy extends Sprite {
     }
 
     public void addSpawnBullet(float x, float y, boolean movingRight) {
+        AudioManager.instance.play(Assets.instance.sounds.bullet_enemy);
         bulletSpawnQueue.add(new SpawningBullet(x, y, movingRight));
     }
 

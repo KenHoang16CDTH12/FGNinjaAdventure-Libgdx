@@ -149,10 +149,10 @@ public class Knight extends Enemy implements Pool.Poolable {
     private State getState() {
         if (isDead)
             return State.DEAD;
-        else if (body.getLinearVelocity().x != 0)
-            return State.RUN;
         else if (isAttack)
             return State.ATTACK;
+        else if (body.getLinearVelocity().x != 0)
+            return State.RUN;
            // if none of these return then he must be standing
         else
             return State.IDLE;
@@ -199,11 +199,12 @@ public class Knight extends Enemy implements Pool.Poolable {
 
     @Override
     public int score() {
-        return 500;
+        return 150;
     }
 
     @Override
     public void killed() {
+        super.killed();
         setRegion((TextureRegion) knightDead.getKeyFrame(stateTimer));
         isDead = true;
         isRun = false;

@@ -306,14 +306,6 @@ public class Player extends Sprite {
             if (isDead) {
                 return State.DEAD;
             }
-            else if ((body.getLinearVelocity().y > 0 && currentState == State.GLIDE) || (body.getLinearVelocity().y < 0 && previousState == State.GLIDE) && hasFeatherPowerup)
-                return State.GLIDE;
-            else if ((body.getLinearVelocity().y > 0 && currentState == State.JUMP) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP))
-                return State.JUMP;
-            else if ((body.getLinearVelocity().y > 0 && currentState == State.JUMP_THROW) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP_THROW))
-                return State.JUMP_THROW;
-            else if (body.getLinearVelocity().x != 0)
-                return State.RUN;
             else if (isSlide)
                 return State.SLIDE;
             else if (isClimb)
@@ -324,13 +316,24 @@ public class Player extends Sprite {
                 return State.THROW;
             else if (isDelay)
                 return State.DELAY;
+            else if ((body.getLinearVelocity().y > 0 && currentState == State.GLIDE) || (body.getLinearVelocity().y < 0 && previousState == State.GLIDE) && hasFeatherPowerup)
+                return State.GLIDE;
+            else if ((body.getLinearVelocity().y > 0 && currentState == State.JUMP) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP))
+                return State.JUMP;
+            else if ((body.getLinearVelocity().y > 0 && currentState == State.JUMP_THROW) || (body.getLinearVelocity().y < 0 && previousState == State.JUMP_THROW))
+                return State.JUMP_THROW;
+            else if (body.getLinearVelocity().x != 0)
+                return State.RUN;
                 // if none of these return then he must be standing
             else
                 return State.IDDLE;
     }
 
     public void jump() {
-        if (currentState != State.JUMP && currentState != State.ATTACK) {
+        if (currentState != State.JUMP && currentState != State.ATTACK
+                && currentState != State.JUMP_THROW
+                && currentState != State.THROW
+                && !isClimb && !isDead && !isSlide && !isAttack && !isThrow) {
             if (currentState != State.GLIDE) {
                 if (hasFeatherPowerup) {
                     AudioManager.instance.play(Assets.instance.sounds.glide);
@@ -338,7 +341,7 @@ public class Player extends Sprite {
                     currentState = State.GLIDE;
                 }
                 else if (currentState != State.JUMP_THROW) {
-                    // AudioManager.instance.play(Assets.instance.sounds.jump);
+                    AudioManager.instance.play(Assets.instance.sounds.jump);
                     body.applyLinearImpulse(new Vector2(0, 7f), body.getWorldCenter(), true);
                     currentState = State.JUMP;
                 }
@@ -378,8 +381,9 @@ public class Player extends Sprite {
     public void jumpThrow() {
         if (currentState != State.JUMP
                 && currentState != State.JUMP_THROW
-                && currentState != State.GLIDE) {
-            // AudioManager.instance.play(Assets.instance.sounds.jump);
+                && currentState != State.GLIDE
+                && !isClimb && !isDead && !isSlide && !isAttack && !isThrow) {
+            AudioManager.instance.play(Assets.instance.sounds.jump_throw);
             body.applyLinearImpulse(new Vector2(0, 7f), body.getWorldCenter(), true);
             currentState = State.JUMP_THROW;
             canThrow = false;
@@ -388,6 +392,7 @@ public class Player extends Sprite {
 
     public void attack() {
         if (currentState != State.ATTACK && currentState != State.GLIDE && currentState != State.JUMP) {
+            AudioManager.instance.play(Assets.instance.sounds.melee);
             isAttack = true;
             setRegion((TextureRegion) playerAttack.getKeyFrame(stateTimer));
         }
@@ -395,6 +400,7 @@ public class Player extends Sprite {
 
     public void attackThrow() {
         if (currentState != State.JUMP_THROW && currentState != State.JUMP && currentState != State.GLIDE && currentState != State.ATTACK && canThrow && !world.isLocked()) {
+            AudioManager.instance.play(Assets.instance.sounds.attackThrow);
             float x = runningRight ? 1f : -1f;
             float y = -0.1f;
             // if you want to spawn a new bullet:
@@ -498,7 +504,7 @@ public class Player extends Sprite {
     public void playerDie() {
         if(!isDead) {
             body.getLinearVelocity().x = 0;
-            AudioManager.instance.play(Assets.instance.sounds.liveLost);
+            AudioManager.instance.play(Assets.instance.sounds.live_lost);
             ValueManager.instance.lives--;
             if (!isPlayerFalling())
                 ValueManager.instance.timeLeftLiveLost = TIME_DELAY_LIVE_LOST;

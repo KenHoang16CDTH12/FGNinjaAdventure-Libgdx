@@ -162,6 +162,9 @@ public class Assets implements Disposable, AssetErrorListener {
         fonts.defaultSmall.dispose();
         fonts.defaultNormal.dispose();
         fonts.defaultBig.dispose();
+        fonts.textFont.dispose();
+        fonts.textFontNormal.dispose();
+        fonts.textFontSmall.dispose();
     }
 
     public class AssetTexture {

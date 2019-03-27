@@ -1,38 +1,61 @@
 package com.fgdev.game.logics;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.fgdev.game.Constants;
 import com.fgdev.game.entitiles.Player;
-import com.fgdev.game.entitiles.enemies.*;
-import com.fgdev.game.entitiles.tiles.box.BoxObject;
-import com.fgdev.game.entitiles.tiles.item.Coin;
-import com.fgdev.game.entitiles.tiles.box.Crate;
-import com.fgdev.game.entitiles.tiles.item.Feather;
+import com.fgdev.game.entitiles.enemies.AdventureGirl;
+import com.fgdev.game.entitiles.enemies.Bone;
+import com.fgdev.game.entitiles.enemies.Dino;
+import com.fgdev.game.entitiles.enemies.Enemy;
+import com.fgdev.game.entitiles.enemies.Ghost;
+import com.fgdev.game.entitiles.enemies.Knight;
+import com.fgdev.game.entitiles.enemies.Robot;
+import com.fgdev.game.entitiles.enemies.Santa;
+import com.fgdev.game.entitiles.enemies.Zombie;
 import com.fgdev.game.entitiles.objects.Clouds;
+import com.fgdev.game.entitiles.tiles.box.BoxObject;
+import com.fgdev.game.entitiles.tiles.box.Crate;
+import com.fgdev.game.entitiles.tiles.item.Coin;
+import com.fgdev.game.entitiles.tiles.item.Feather;
 import com.fgdev.game.entitiles.tiles.item.ItemObject;
+import com.fgdev.game.helpers.B2WorldCreator;
 import com.fgdev.game.helpers.BackgroundTiledMapRenderer;
 import com.fgdev.game.helpers.ScoreIndicator;
-import com.fgdev.game.screens.*;
-import com.fgdev.game.helpers.B2WorldCreator;
 import com.fgdev.game.helpers.WorldContactListener;
-import com.fgdev.game.utils.*;
+import com.fgdev.game.screens.DirectedGame;
+import com.fgdev.game.screens.GameOverOverlay;
+import com.fgdev.game.screens.JoystickOverlay;
+import com.fgdev.game.screens.LevelStartScreen;
+import com.fgdev.game.screens.MenuScreen;
+import com.fgdev.game.utils.Assets;
+import com.fgdev.game.utils.AudioManager;
+import com.fgdev.game.utils.GamePreferences;
+import com.fgdev.game.utils.ValueManager;
 
-import static com.fgdev.game.Constants.*;
+import static com.fgdev.game.Constants.GRAVITY;
+import static com.fgdev.game.Constants.POSITION_ITERATIONS;
+import static com.fgdev.game.Constants.PPM;
+import static com.fgdev.game.Constants.STEP_TIME;
+import static com.fgdev.game.Constants.VELOCITY_ITERATIONS;
+import static com.fgdev.game.Constants.V_WIDTH;
+import static com.fgdev.game.Constants.WINDOW_HEIGHT;
 
 public class GameScreenLogic implements Disposable {
 
@@ -72,11 +95,18 @@ public class GameScreenLogic implements Disposable {
     // Map Width
     private float mapWidth;
     // Background
-    Texture background;
+    private Texture background;
+    private float accumulator = 0;
+    private boolean isCheckNextLevel;
+    private boolean isCheckFallWater;
+    private boolean isCheckGameOver;
 
     public GameScreenLogic(DirectedGame game) {
         this.game = game;
         isDebug = GamePreferences.instance.debug;
+        isCheckNextLevel = true;
+        isCheckFallWater = true;
+        isCheckGameOver = true;
         init();
     }
 
@@ -93,7 +123,7 @@ public class GameScreenLogic implements Disposable {
 
     private void initCamera() {
         // Init batch
-        batch = game.getBatch();
+        batch = new SpriteBatch();
         // Create cam used to follow mario through cam world
         camera = new OrthographicCamera();
         // Create a FitViewport to maintain virtual aspect ratio despite screen size
@@ -152,22 +182,15 @@ public class GameScreenLogic implements Disposable {
 
     private void resetPlayer() {
         world.destroyBody(player.getBody());
+        isCheckFallWater = true;
         player = new Player(world);
     }
 
     public void update (float deltaTime) {
-        world.step(deltaTime, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-        // Check game over
-        if (ValueManager.instance.isGameOver()) {
-            ValueManager.instance.timeLeftGameOverDelay -= deltaTime;
-            if (ValueManager.instance.timeLeftGameOverDelay < 0) backToMenu();
-        } else {
-            if (!player.isDead()) {
-                handleInput(deltaTime);
-            } else {
-                ValueManager.instance.timeLeftLiveLost -= deltaTime;
-                if (ValueManager.instance.timeLeftLiveLost < 0) resetPlayer();
-            }
+        accumulator += Math.min(deltaTime, 0.25f);
+        if (accumulator >= STEP_TIME) {
+            accumulator -= STEP_TIME;
+            world.step(STEP_TIME, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
         }
         // Handle Debug Input
         // handleDebugInput(deltaTime);
@@ -179,13 +202,13 @@ public class GameScreenLogic implements Disposable {
         updateTile(deltaTime);
         // update ScoreIndicator
         scoreIndicator.update(deltaTime);
-
         if (ValueManager.instance.livesVisual > ValueManager.instance.lives) {
             ValueManager.instance.livesVisual = Math.max(ValueManager.instance.lives, ValueManager.instance.livesVisual - 1 * deltaTime);
         }
         if (ValueManager.instance.scoreVisual < ValueManager.instance.score)
             ValueManager.instance.scoreVisual = Math.min(ValueManager.instance.score, ValueManager.instance.scoreVisual + 250 * deltaTime);
-        if (!ValueManager.instance.isGameOver() && player.isPlayerFalling()) {
+        if (!ValueManager.instance.isGameOver() && player.isPlayerFalling() && isCheckFallWater) {
+            isCheckFallWater = false;
             AudioManager.instance.play(Assets.instance.sounds.water);
             player.playerDie();
         }
@@ -193,12 +216,27 @@ public class GameScreenLogic implements Disposable {
         if (ValueManager.instance.isNextLevel) {
             ValueManager.instance.timeNextLevel -= deltaTime;
             player.climb();
-            if (ValueManager.instance.timeNextLevel < 0) {
+            if (ValueManager.instance.timeNextLevel < 0 && isCheckNextLevel) {
+                isCheckNextLevel = false;
                 if (ValueManager.instance.levelCurrent > ValueManager.instance.totalLevel) {
                     backToMenu();
                 } else {
                     game.setScreen(new LevelStartScreen(game));
                 }
+            }
+        }
+        // Check game over
+        if (ValueManager.instance.isGameOver() && isCheckGameOver) {
+            ValueManager.instance.timeLeftGameOverDelay -= deltaTime;
+            if (ValueManager.instance.timeLeftGameOverDelay < 0) {
+                backToMenu();
+            }
+        } else {
+            if (!player.isDead()) {
+                handleInput(deltaTime);
+            } else {
+                ValueManager.instance.timeLeftLiveLost -= deltaTime;
+                if (ValueManager.instance.timeLeftLiveLost < 0) resetPlayer();
             }
         }
     }
@@ -428,19 +466,18 @@ public class GameScreenLogic implements Disposable {
         float x = cameraGUI.viewportWidth - 55;
         float y = cameraGUI.viewportHeight - 15;
         int fps = Gdx.graphics.getFramesPerSecond();
-        BitmapFont fpsFont = Assets.instance.fonts.defaultNormal;
         if (fps >= 45) {
             // 45 or more FPS show up in green
-            fpsFont.setColor(0, 1, 0, 1);
+            Assets.instance.fonts.defaultNormal.setColor(0, 1, 0, 1);
         } else if (fps >= 30) {
             // 30 or more FPS show up in yellow
-            fpsFont.setColor(1, 1, 0, 1);
+            Assets.instance.fonts.defaultNormal.setColor(1, 1, 0, 1);
         } else {
             // less than 30 FPS show up in red
-            fpsFont.setColor(1, 0, 0, 1);
+            Assets.instance.fonts.defaultNormal.setColor(1, 0, 0, 1);
         }
-        fpsFont.draw(batch, "FPS: " + fps, x, y);
-        fpsFont.setColor(1, 1, 1, 1); // white
+        Assets.instance.fonts.defaultNormal.draw(batch, "FPS: " + fps, x, y);
+        Assets.instance.fonts.defaultNormal.setColor(1, 1, 1, 1); // white
     }
 
     private void renderGuiOverlay (SpriteBatch batch) {
@@ -471,22 +508,10 @@ public class GameScreenLogic implements Disposable {
         }
     }
 
-    @Override
-    public void dispose() {
-        map.dispose();
-        world.dispose();
-        renderer.dispose();
-        b2dr.dispose();
-        scoreIndicator.dispose();
-        shaderMonochrome.dispose();
-        gameOverOverlay.dispose();
-        joystickOverlay.dispose();
-        background.dispose();
-    }
-
     public void backToMenu () {
         // switch to menu screen
         game.setScreen(new MenuScreen(game));
+        isCheckGameOver = false;
     }
 
     private void handleInput(float deltaTime) {
@@ -576,4 +601,19 @@ public class GameScreenLogic implements Disposable {
     public JoystickOverlay getJoystickOverlay() {
         return joystickOverlay;
     }
+
+    @Override
+    public void dispose() {
+        map.dispose();
+        renderer.dispose();
+        world.dispose();
+        b2dr.dispose();
+        scoreIndicator.dispose();
+        shaderMonochrome.dispose();
+        background.dispose();
+        gameOverOverlay.dispose();
+        joystickOverlay.dispose();
+        batch.dispose();
+    }
+
 }

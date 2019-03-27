@@ -77,6 +77,7 @@ public class Constants {
 
     // Logic
     public static final Vector2 GRAVITY = new Vector2(0.0f, -9.8f);
+    public static final float STEP_TIME = 1f/60f;
     public static final int VELOCITY_ITERATIONS = 6;
     public static final int POSITION_ITERATIONS = 2;
     // speed

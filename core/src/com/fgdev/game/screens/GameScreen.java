@@ -1,9 +1,10 @@
 package com.fgdev.game.screens;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
-import com.fgdev.game.utils.GamePreferences;
 import com.fgdev.game.logics.GameScreenLogic;
+import com.fgdev.game.utils.GamePreferences;
 
 public class GameScreen extends AbstractGameScreen {
 
@@ -32,9 +33,13 @@ public class GameScreen extends AbstractGameScreen {
 
     @Override
     public void show() {
+       init();
+       Gdx.input.setCatchBackKey(true);
+    }
+
+    public void init() {
         GamePreferences.instance.load();
         gameScreenLogic = new GameScreenLogic(game);
-        Gdx.input.setCatchBackKey(true);
     }
 
     @Override

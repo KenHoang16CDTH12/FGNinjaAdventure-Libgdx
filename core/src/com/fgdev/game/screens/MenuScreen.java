@@ -10,18 +10,34 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.fgdev.game.utils.Assets;
-import com.fgdev.game.screens.transitions.ScreenTransition;
-import com.fgdev.game.screens.transitions.ScreenTransitionFade;
-import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.Constants;
+import com.fgdev.game.utils.Assets;
+import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.utils.GamePreferences;
 import com.fgdev.game.utils.ValueManager;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.touchable;
 
 public class MenuScreen extends AbstractGameScreen {
 
@@ -105,8 +121,6 @@ public class MenuScreen extends AbstractGameScreen {
         stage = new Stage(new StretchViewport(Constants.WINDOW_WIDTH,
                 Constants.WINDOW_HEIGHT));
         ValueManager.instance.init();
-        AudioManager.instance.stopMusic();
-        AudioManager.instance.play(Assets.instance.music.menu_music);
         rebuildStage();
     }
 
@@ -256,9 +270,9 @@ public class MenuScreen extends AbstractGameScreen {
     }
 
     private void onPlayClicked () {
-        game.setScreen(new LevelStartScreen(game));
-        AudioManager.instance.stopMusic();
         AudioManager.instance.play(Assets.instance.music.background);
+        ValueManager.instance.isNextLevel = true;
+        game.setScreen(new LevelStartScreen(game));
     }
 
     private void onOptionsClicked () {

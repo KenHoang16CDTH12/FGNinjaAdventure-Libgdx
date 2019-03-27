@@ -10,7 +10,9 @@ import com.fgdev.game.screens.transitions.ScreenTransition;
 import com.fgdev.game.screens.transitions.ScreenTransitionFade;
 import com.fgdev.game.screens.transitions.ScreenTransitionSlice;
 import com.fgdev.game.utils.Assets;
+import com.fgdev.game.utils.AudioManager;
 import com.fgdev.game.utils.GamePreferences;
+import com.fgdev.game.utils.ValueManager;
 
 public class FGDevMain extends DirectedGame {
 
@@ -26,19 +28,8 @@ public class FGDevMain extends DirectedGame {
 		Assets.instance.init(new AssetManager());
 		// Load preferences for audio settings and start playing music
 		GamePreferences.instance.load();
+		AudioManager.instance.play(Assets.instance.music.menu_music);
 		// Start game at menu screen
-		setScreen(new MenuScreen(FGDevMain.this));
-	}
-
-	@Override
-	public void render() {
-		Gdx.graphics.setTitle(String.format(GAME_TITLE, Gdx.graphics.getFramesPerSecond()));
-		super.render();
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-		Assets.instance.dispose();
+		setScreen(new MenuScreen(this));
 	}
 }
